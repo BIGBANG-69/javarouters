@@ -50,6 +50,14 @@ jobs:
           src/main.tsx
           src/context/__tests__/theme-boot-script.test.ts
           src/context/__tests__/theme-preferences.test.tsx
+          src/features/javarouters
+          src/features/home/index.tsx
+          src/features/auth/auth-layout.tsx
+          src/components/layout/components/public-layout.tsx
+          src/i18n/config.ts
+          src/i18n/detection.ts
+          src/i18n/languages.ts
+          src/i18n/__tests__
 
       - name: Test
         run: bun run test

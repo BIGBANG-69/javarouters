@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T00:00:00Z",
+  "title": "Design System: JavaRouters",
+  "extensions": {
+    "colorMeta": {
+      "emerald": { "role": "primary", "displayName": "Ledger Emerald", "canonical": "oklch(0.508 0.118 165.612)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.696 0.17 162.48)", "oklch(0.845 0.143 164.978)", "oklch(0.95 0.052 163.051)"] },
+      "emerald-bright": { "role": "primary", "displayName": "Signal Emerald (dark mode primary)", "canonical": "oklch(0.696 0.17 162.48)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.696 0.17 162.48)", "oklch(0.845 0.143 164.978)", "oklch(0.95 0.052 163.051)"] },
+      "emerald-ring": { "role": "primary", "displayName": "Ring Emerald", "canonical": "oklch(0.596 0.145 163.225)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.696 0.17 162.48)", "oklch(0.845 0.143 164.978)", "oklch(0.95 0.052 163.051)"] },
+      "emerald-ring-dark": { "role": "primary", "displayName": "Ring Emerald (dark mode)", "canonical": "oklch(0.765 0.177 163.223)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.765 0.177 163.223)", "oklch(0.845 0.143 164.978)", "oklch(0.95 0.052 163.051)"] },
+      "emerald-wash": { "role": "primary", "displayName": "Emerald Wash", "canonical": "color-mix(in oklch, var(--primary) 10%, transparent)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.765 0.177 163.223)", "oklch(0.905 0.093 164.15)", "oklch(0.979 0.021 166.113)"] },
+      "deep-forest": { "role": "primary", "displayName": "Deep Forest", "canonical": "oklch(0.262 0.051 172.552)", "tonalRamp": ["oklch(0.262 0.051 172.552)", "oklch(0.378 0.077 168.94)", "oklch(0.432 0.095 166.913)", "oklch(0.508 0.118 165.612)", "oklch(0.596 0.145 163.225)", "oklch(0.696 0.17 162.48)", "oklch(0.845 0.143 164.978)", "oklch(0.95 0.052 163.051)"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "graphite": { "role": "neutral", "displayName": "Graphite", "canonical": "oklch(0.49 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(0.93 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "mist": { "role": "neutral", "displayName": "Mist", "canonical": "oklch(0.97 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "charcoal": { "role": "neutral", "displayName": "Charcoal (dark ground)", "canonical": "oklch(0.235 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "charcoal-raised": { "role": "neutral", "displayName": "Charcoal Raised (dark card)", "canonical": "oklch(0.285 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "chalk": { "role": "neutral", "displayName": "Chalk (dark ink)", "canonical": "oklch(0.965 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.965 0 0)", "oklch(1 0 0)"] },
+      "chalk-muted": { "role": "neutral", "displayName": "Chalk Muted (dark muted ink)", "canonical": "oklch(0.78 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.235 0 0)", "oklch(0.285 0 0)", "oklch(0.49 0 0)", "oklch(0.78 0 0)", "oklch(0.93 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"] },
+      "strike-red": { "role": "tertiary", "displayName": "Strike Red (diff removed line only)", "canonical": "oklch(0.577 0.245 27.325)", "tonalRamp": ["oklch(0.25 0.09 27.3)", "oklch(0.35 0.14 27.3)", "oklch(0.45 0.19 27.3)", "oklch(0.577 0.245 27.325)", "oklch(0.66 0.2 27.3)", "oklch(0.75 0.14 27.3)", "oklch(0.86 0.07 27.3)", "oklch(0.95 0.025 27.3)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only; two lines, the second in emerald. Schibsted Grotesk Variable, self-hosted." },
+      "headline-lg": { "displayName": "Headline Large", "purpose": "Closing field headline (2.25rem below 640px) and the auth value panel statement." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings; 1.875rem below 640px." },
+      "title": { "displayName": "Title", "purpose": "Step titles and fact terms (body font, 600)." },
+      "body-lead": { "displayName": "Body Lead", "purpose": "Hero supporting line in Graphite, max 42rem." },
+      "body": { "displayName": "Body", "purpose": "Section copy and detail text. Resolves to var(--font-body): browser sans-serif by default, Public Sans Variable when the theme font axis is Sans. The direction contract intends Public Sans; making it the public-page default is an open decision." },
+      "button": { "displayName": "Button", "purpose": "Button labels, 0.875rem semibold." },
+      "price": { "displayName": "Price", "purpose": "JavaRouters sell prices in emerald with tabular numerals; 0.875rem below 640px." },
+      "label": { "displayName": "Label", "purpose": "Table heads, board notes, chip text, footer bottom line." },
+      "mono": { "displayName": "Mono", "purpose": "Model identifiers (13px mobile, 14px from 640px) and code lines (13px on a 24px line)." }
+    },
+    "shadows": [
+      { "name": "header-scrolled", "value": "0 1px 0 rgba(16,24,40,0.02), 0 6px 16px -12px rgba(16,24,40,0.18)", "purpose": "Public header after 8px of scroll or with the mobile menu open. The only shadow on the public surface." }
+    ],
+    "motion": [
+      { "name": "rate-row-settle", "value": "jr-rate-row-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both; from opacity 0.35, translateY(6px); 45ms stagger per row", "purpose": "Rate board rows settling in on family tab change. Disabled under prefers-reduced-motion." },
+      { "name": "header-reveal", "value": "border-color, box-shadow 300ms", "purpose": "Header border and shadow fading in on scroll." },
+      { "name": "color-hover", "value": "color 150ms (Tailwind transition-colors)", "purpose": "Nav and footer link hover from Graphite to Ink." },
+      { "name": "press-nudge", "value": "translateY(1px) on :active", "purpose": "Button press feedback from the shared Button component." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single forward action: Buat akun / Buka konsol, with a trailing arrow.",
+      "html": "<button class=\"ds-btn-primary\">Buat akun <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; background: var(--primary, oklch(0.508 0.118 165.612)); color: var(--primary-foreground, #fff); border: 1px solid transparent; border-radius: 16px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary, oklch(0.508 0.118 165.612)) 80%, transparent); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.596 0.145 163.225)) 50%, transparent); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action beside the primary: Lihat semua harga.",
+      "html": "<button class=\"ds-btn-outline\">Lihat semua harga</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; background: var(--background, #fff); color: var(--foreground, oklch(0.145 0 0)); border: 1px solid var(--border, oklch(0.93 0 0)); border-radius: 16px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; } .ds-btn-outline:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.596 0.145 163.225)) 50%, transparent); } .ds-btn-outline:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Closing Field with On-Emerald Buttons",
+      "kind": "custom",
+      "refersTo": "closing-field",
+      "description": "Full-bleed emerald band ending the landing page, with inverted primary and translucent outline buttons.",
+      "html": "<section class=\"ds-closing\"><div><h2 class=\"ds-closing-title\">Mulai dengan satu API key.</h2><p class=\"ds-closing-copy\">Buat akun dalam satu menit, isi saldo, lalu langsung pakai semua model.</p></div><div class=\"ds-closing-actions\"><button class=\"ds-btn-on-emerald\">Buat akun</button><button class=\"ds-btn-on-emerald-outline\">Lihat harga</button></div></section>",
+      "css": ".ds-closing { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between; padding: 80px 24px; background: var(--primary, oklch(0.508 0.118 165.612)); color: var(--primary-foreground, #fff); } .ds-closing-title { margin: 0; font-family: 'Schibsted Grotesk Variable', sans-serif; font-size: 3rem; font-weight: 600; line-height: 1; letter-spacing: -0.03em; } .ds-closing-copy { margin: 16px 0 0; font-size: 1.125rem; line-height: 1.625; opacity: 0.85; } .ds-closing-actions { display: flex; gap: 12px; flex-wrap: wrap; } .ds-btn-on-emerald, .ds-btn-on-emerald-outline { height: 44px; padding: 0 20px; border-radius: 16px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.15s; } .ds-btn-on-emerald { background: var(--background, #fff); color: var(--foreground, oklch(0.145 0 0)); border: 1px solid transparent; } .ds-btn-on-emerald:hover { background: color-mix(in oklch, var(--background, #fff) 90%, transparent); } .ds-btn-on-emerald-outline { background: transparent; color: var(--primary-foreground, #fff); border: 1px solid color-mix(in oklch, var(--primary-foreground, #fff) 40%, transparent); } .ds-btn-on-emerald-outline:hover { background: color-mix(in oklch, var(--primary-foreground, #fff) 10%, transparent); } .ds-btn-on-emerald:focus-visible, .ds-btn-on-emerald-outline:focus-visible { outline: 2px solid var(--primary-foreground, #fff); outline-offset: 2px; }"
+    },
+    {
+      "name": "Rate Board",
+      "kind": "card",
+      "refersTo": "rate-board",
+      "description": "Signature component: live model prices, official struck through beside the JavaRouters price in emerald tabular figures.",
+      "html": "<section class=\"ds-board\"><div class=\"ds-board-bar\"><div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Claude</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">GPT</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Gemini</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">DeepSeek</button></div><p class=\"ds-board-note\"><span class=\"ds-dot\"></span>Per 1 juta token · disinkronkan otomatis tiap jam</p></div><table class=\"ds-board-table\"><thead><tr><th>Model</th><th class=\"ds-num\">Input</th><th class=\"ds-num\">Output</th><th class=\"ds-num\">Hemat</th></tr></thead><tbody><tr class=\"ds-rate-row\"><th scope=\"row\" class=\"ds-model\">claude-sonnet-5.5</th><td class=\"ds-num\"><s class=\"ds-official\">$2</s> <span class=\"ds-sell\">$1.4</span></td><td class=\"ds-num\"><s class=\"ds-official\">$10</s> <span class=\"ds-sell\">$7</span></td><td class=\"ds-num\"><span class=\"ds-chip\">Hemat 30%</span></td></tr><tr class=\"ds-rate-row\"><th scope=\"row\" class=\"ds-model\">claude-opus-5.5</th><td class=\"ds-num\"><s class=\"ds-official\">$4</s> <span class=\"ds-sell\">$2.8</span></td><td class=\"ds-num\"><s class=\"ds-official\">$20</s> <span class=\"ds-sell\">$14</span></td><td class=\"ds-num\"><span class=\"ds-chip\">Hemat 30%</span></td></tr></tbody></table><div class=\"ds-board-foot\"><span>Harga yang dicoret adalah harga resmi penyedia.</span><a href=\"#\" class=\"ds-board-link\">Lihat semua model dan harga</a></div></section>",
+      "css": ".ds-board { overflow: hidden; background: var(--card, #fff); color: var(--card-foreground, oklch(0.145 0 0)); border: 1px solid var(--border, oklch(0.93 0 0)); border-radius: 22.4px; } .ds-board-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding: 16px 24px 12px; } .ds-tabs { display: flex; gap: 16px; } .ds-tab { position: relative; height: 32px; padding: 0; background: none; border: 0; font-size: 0.875rem; font-weight: 500; color: color-mix(in oklch, var(--foreground, oklch(0.145 0 0)) 60%, transparent); cursor: pointer; transition: color 0.15s; } .ds-tab:hover, .ds-tab[aria-selected=\"true\"] { color: var(--foreground, oklch(0.145 0 0)); } .ds-tab[aria-selected=\"true\"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px; background: var(--primary, oklch(0.508 0.118 165.612)); } .ds-tab:focus-visible { outline: 2px solid var(--ring, oklch(0.596 0.145 163.225)); outline-offset: 2px; } .ds-board-note { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 0.75rem; color: var(--muted-foreground, oklch(0.49 0 0)); } .ds-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--primary, oklch(0.508 0.118 165.612)); } .ds-board-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; } .ds-board-table thead th { padding: 10px 24px; font-size: 0.75rem; font-weight: 500; text-align: left; color: var(--muted-foreground, oklch(0.49 0 0)); border-top: 1px solid color-mix(in oklch, var(--border, oklch(0.93 0 0)) 70%, transparent); } .ds-board-table .ds-num { text-align: right; } .ds-rate-row th, .ds-rate-row td { padding: 14px 24px; border-top: 1px solid color-mix(in oklch, var(--border, oklch(0.93 0 0)) 70%, transparent); } .ds-rate-row { animation: ds-rate-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both; } .ds-rate-row:nth-child(2) { animation-delay: 45ms; } @keyframes ds-rate-in { from { opacity: 0.35; transform: translateY(6px); } } @media (prefers-reduced-motion: reduce) { .ds-rate-row { animation: none; } } .ds-model { text-align: left; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.875rem; font-weight: 500; } .ds-official { margin-right: 10px; font-size: 0.875rem; color: var(--muted-foreground, oklch(0.49 0 0)); text-decoration-thickness: 1.5px; font-variant-numeric: tabular-nums; } .ds-sell { font-size: 1rem; font-weight: 600; color: var(--primary, oklch(0.508 0.118 165.612)); font-variant-numeric: tabular-nums; } .ds-chip { display: inline-block; padding: 4px 8px; border-radius: 12.8px; font-size: 0.75rem; font-weight: 600; color: var(--primary, oklch(0.508 0.118 165.612)); background: color-mix(in oklch, var(--primary, oklch(0.508 0.118 165.612)) 10%, transparent); font-variant-numeric: tabular-nums; } .ds-board-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; padding: 12px 24px; font-size: 0.75rem; color: var(--muted-foreground, oklch(0.49 0 0)); background: color-mix(in oklch, var(--muted, oklch(0.97 0 0)) 30%, transparent); border-top: 1px solid color-mix(in oklch, var(--border, oklch(0.93 0 0)) 70%, transparent); } .ds-board-link { color: var(--primary, oklch(0.508 0.118 165.612)); font-weight: 500; text-decoration: none; text-underline-offset: 4px; } .ds-board-link:hover { text-decoration: underline; } .ds-board-link:focus-visible { outline: 2px solid var(--ring, oklch(0.596 0.145 163.225)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Savings Chip",
+      "kind": "chip",
+      "refersTo": "savings-chip",
+      "description": "Emerald-wash chip carrying the live savings percentage in the rate board.",
+      "html": "<span class=\"ds-chip-savings\">Hemat 30%</span>",
+      "css": ".ds-chip-savings { display: inline-block; padding: 4px 8px; border-radius: 12.8px; font-size: 0.75rem; font-weight: 600; line-height: 1.333; color: var(--primary, oklch(0.508 0.118 165.612)); background: color-mix(in oklch, var(--primary, oklch(0.508 0.118 165.612)) 10%, transparent); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Switch Snippet",
+      "kind": "custom",
+      "refersTo": "code-panel",
+      "description": "Ganti satu baris: a code diff where the only changed line swaps the provider base URL for JavaRouters, with language tabs and copy.",
+      "html": "<div class=\"ds-snippet\"><div class=\"ds-snippet-bar\"><div class=\"ds-snippet-tabs\"><button class=\"ds-snippet-tab\" aria-selected=\"true\">Python</button><button class=\"ds-snippet-tab\" aria-selected=\"false\">Node.js</button><button class=\"ds-snippet-tab\" aria-selected=\"false\">curl</button><button class=\"ds-snippet-tab\" aria-selected=\"false\">Claude Code</button></div><button class=\"ds-snippet-copy\" aria-label=\"Salin kode\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/></svg></button></div><pre class=\"ds-snippet-code\"><code><span class=\"ds-line\"><span class=\"ds-mark\"> </span>client = OpenAI(</span><span class=\"ds-line ds-removed\"><span class=\"ds-mark\">−</span>    base_url=\"https://api.openai.com/v1\",</span><span class=\"ds-line ds-added\"><span class=\"ds-mark\">+</span>    base_url=\"https://javarouters.talentadigitalkudus.id/v1\",</span><span class=\"ds-line\"><span class=\"ds-mark\"> </span>    api_key=os.environ[\"JAVAROUTERS_API_KEY\"],</span><span class=\"ds-line\"><span class=\"ds-mark\"> </span>)</span></code></pre></div>",
+      "css": ".ds-snippet { overflow: hidden; background: var(--card, #fff); border: 1px solid var(--border, oklch(0.93 0 0)); border-radius: 22.4px; } .ds-snippet-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; border-bottom: 1px solid color-mix(in oklch, var(--border, oklch(0.93 0 0)) 70%, transparent); } .ds-snippet-tabs { display: flex; gap: 12px; } .ds-snippet-tab { position: relative; height: 32px; padding: 0; background: none; border: 0; font-size: 13px; font-weight: 500; color: color-mix(in oklch, var(--foreground, oklch(0.145 0 0)) 60%, transparent); cursor: pointer; } .ds-snippet-tab:hover, .ds-snippet-tab[aria-selected=\"true\"] { color: var(--foreground, oklch(0.145 0 0)); } .ds-snippet-tab[aria-selected=\"true\"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px; background: var(--primary, oklch(0.508 0.118 165.612)); } .ds-snippet-copy { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: none; border: 0; border-radius: 12.8px; color: var(--foreground, oklch(0.145 0 0)); cursor: pointer; } .ds-snippet-copy:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-snippet-copy:focus-visible, .ds-snippet-tab:focus-visible { outline: 2px solid var(--ring, oklch(0.596 0.145 163.225)); outline-offset: 2px; } .ds-snippet-code { margin: 0; padding: 12px 0; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 24px; } .ds-line { display: flex; min-width: max-content; padding: 0 16px; white-space: pre; color: color-mix(in oklch, var(--foreground, oklch(0.145 0 0)) 80%, transparent); } .ds-mark { width: 20px; flex-shrink: 0; user-select: none; color: color-mix(in oklch, var(--muted-foreground, oklch(0.49 0 0)) 70%, transparent); } .ds-removed { background: color-mix(in oklch, var(--destructive, oklch(0.577 0.245 27.325)) 8%, transparent); color: color-mix(in oklch, var(--destructive, oklch(0.577 0.245 27.325)) 90%, transparent); text-decoration: line-through; text-decoration-thickness: 1px; } .ds-added { background: color-mix(in oklch, var(--primary, oklch(0.508 0.118 165.612)) 10%, transparent); color: var(--foreground, oklch(0.145 0 0)); font-weight: 500; }"
+    },
+    {
+      "name": "Public Header",
+      "kind": "nav",
+      "refersTo": "public-header",
+      "description": "Fixed 64px bar: brand lockup, text links, utilities and auth actions; border and shadow appear on scroll.",
+      "html": "<header class=\"ds-header ds-header-scrolled\"><a href=\"#\" class=\"ds-brand\"><span class=\"ds-brand-logo\"></span><span class=\"ds-brand-name\">JavaRouters</span></a><nav class=\"ds-nav\" aria-label=\"Navigasi utama\"><a href=\"#\" class=\"ds-nav-link\" aria-current=\"page\">Model &amp; Harga</a><a href=\"#\" class=\"ds-nav-link\">Dokumentasi</a><a href=\"#\" class=\"ds-nav-link\">Tentang</a></nav><div class=\"ds-header-actions\"><button class=\"ds-header-ghost\">Masuk</button><button class=\"ds-header-cta\">Daftar</button></div></header>",
+      "css": ".ds-header { display: flex; align-items: center; gap: 24px; height: 64px; padding: 0 24px; background: var(--background, #fff); border-bottom: 1px solid transparent; transition: border-color 0.3s, box-shadow 0.3s; } .ds-header-scrolled { border-bottom-color: var(--border, oklch(0.93 0 0)); box-shadow: 0 1px 0 rgba(16,24,40,0.02), 0 6px 16px -12px rgba(16,24,40,0.18); } .ds-brand { display: flex; align-items: center; gap: 10px; color: var(--foreground, oklch(0.145 0 0)); text-decoration: none; } .ds-brand-logo { width: 28px; height: 28px; border-radius: 6px; background: var(--primary, oklch(0.508 0.118 165.612)); } .ds-brand-name { font-family: 'Schibsted Grotesk Variable', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: -0.025em; } .ds-nav { display: flex; gap: 2px; } .ds-nav-link { padding: 8px 12px; border-radius: 12.8px; font-size: 0.875rem; font-weight: 500; color: var(--muted-foreground, oklch(0.49 0 0)); text-decoration: none; transition: color 0.15s; } .ds-nav-link:hover, .ds-nav-link[aria-current=\"page\"] { color: var(--foreground, oklch(0.145 0 0)); } .ds-nav-link:focus-visible { outline: 2px solid var(--ring, oklch(0.596 0.145 163.225)); outline-offset: 2px; } .ds-header-actions { display: flex; gap: 8px; margin-left: auto; } .ds-header-ghost, .ds-header-cta { height: 36px; border-radius: 16px; font-size: 0.875rem; cursor: pointer; border: 1px solid transparent; transition: background 0.15s; } .ds-header-ghost { padding: 0 12px; font-weight: 500; background: transparent; color: var(--foreground, oklch(0.145 0 0)); } .ds-header-ghost:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-header-cta { padding: 0 16px; font-weight: 600; background: var(--primary, oklch(0.508 0.118 165.612)); color: var(--primary-foreground, #fff); } .ds-header-cta:hover { background: color-mix(in oklch, var(--primary, oklch(0.508 0.118 165.612)) 80%, transparent); } .ds-header-ghost:focus-visible, .ds-header-cta:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.596 0.145 163.225)) 50%, transparent); }"
+    },
+    {
+      "name": "Auth Field",
+      "kind": "input",
+      "refersTo": "auth-field",
+      "description": "Sign-in and sign-up fields inside the auth layout's 10px radius.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Nama pengguna atau email</span><input class=\"ds-input\" placeholder=\"Masukkan nama pengguna atau email\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 8px; } .ds-field-label { font-size: 0.875rem; font-weight: 500; color: var(--foreground, oklch(0.145 0 0)); } .ds-input { height: 32px; padding: 0 10px; font-size: 0.875rem; color: var(--foreground, oklch(0.145 0 0)); background: var(--background, #fff); border: 1px solid var(--input, oklch(0.93 0 0)); border-radius: 10px; transition: border-color 0.15s, box-shadow 0.15s; } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.49 0 0)); } .ds-input:focus-visible { outline: none; border-color: var(--ring, oklch(0.596 0.145 163.225)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.596 0.145 163.225)) 50%, transparent); }"
+    },
+    {
+      "name": "Footer Attribution Line",
+      "kind": "custom",
+      "refersTo": "footer",
+      "description": "Footer bottom line: copyright and legal links, plus the required New API attribution at full muted contrast, linked to QuantumNous/new-api.",
+      "html": "<div class=\"ds-footline\"><span>© 2026 JavaRouters</span><span class=\"ds-attrib\">© 2026 <a href=\"https://github.com/QuantumNous/new-api\" target=\"_blank\" rel=\"noopener noreferrer\">New API</a>. Hak cipta dilindungi. Dirancang dan dikembangkan oleh para kontributor proyek.</span></div>",
+      "css": ".ds-footline { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; padding: 20px 24px; font-size: 0.75rem; color: var(--muted-foreground, oklch(0.49 0 0)); border-top: 1px solid color-mix(in oklch, var(--border, oklch(0.93 0 0)) 70%, transparent); } .ds-attrib { color: var(--muted-foreground, oklch(0.49 0 0)); } .ds-attrib a { font-weight: 500; color: color-mix(in oklch, var(--foreground, oklch(0.145 0 0)) 70%, transparent); text-decoration: none; transition: color 0.15s; } .ds-attrib a:hover { color: var(--foreground, oklch(0.145 0 0)); } .ds-attrib a:focus-visible { outline: 2px solid var(--ring, oklch(0.596 0.145 163.225)); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Kurs Board",
+    "overview": "JavaRouters' public face is a money changer's rate board for AI models. The governing artifact is a live price table: each row sets the provider's official price, struck through, beside the JavaRouters price in emerald tabular figures. Everything else on the page (headline, one changed line of code, three steps, four facts, one emerald closing field) exists to lead the eye to that board and then to \"Buat akun\". The surface reads clean and professional: white ground, near-black ink, one emerald, 1px hairline rules, generous section air, and no ornament that the rate board does not earn.\n\nScope is the public surface only: the landing page, the shared public header, the landing footer, and the auth layout (sign-in, sign-up, password reset). The console keeps the upstream New API layout and inherits only the emerald accent tokens from `web/src/styles/javarouters-theme.css`, which override the base palette's accent slots so every page is green from first paint. Light mode is the default; dark mode swaps the ground to charcoal and the accent to a brighter emerald. The default UI language is Indonesian, and all copy is i18n keyed, so layouts must tolerate Indonesian strings that run longer than English.\n\nThe system is built on New API (QuantumNous, AGPLv3). The upstream attribution in the footer is a fixed constraint, not a styling choice: it stays visible, linked and readable on every page that carries the footer.",
+    "keyCharacteristics": [
+      "White paper ground, near-black ink, a single emerald accent; no gradients, glass, kickers or icon tiles.",
+      "Tabular numerals for every price; official price struck through in muted grey, JavaRouters price in emerald.",
+      "Monospace for model names and code; Schibsted Grotesk for display; the body font for everything else.",
+      "Hairline 1px rules divide rows, sections and the footer; the only cast shadow is the scrolled header.",
+      "Left-aligned headings inside a 1152px container; emerald fills are reserved for the closing field and the auth value panel.",
+      "Live data only: model counts and prices come from `/api/pricing`, never from hard-coded numbers."
+    ],
+    "rules": [
+      { "name": "The One Emerald Rule", "body": "Emerald means \"JavaRouters\": our price, our action, our field. It never decorates; a second accent hue does not exist on the public surface.", "section": "colors" },
+      { "name": "The Struck Official Rule", "body": "An official price appears only struck through (1.5px decoration) in Graphite, immediately beside its emerald sell price. The pair is the brand's proof and is never split across columns.", "section": "colors" },
+      { "name": "The Tabular Price Rule", "body": "Every number that a visitor compares (prices, savings percentages, model counts, step numbers) is set with tabular numerals so columns align row after row.", "section": "typography" },
+      { "name": "The Typed-Name Rule", "body": "Model identifiers are shown exactly as the API expects them, in monospace, never prettified or title-cased.", "section": "typography" },
+      { "name": "The Flat Board Rule", "body": "Cards, the rate board and the code panel sit flat on the page with a hairline outline. If something needs to feel separate, give it a rule or a ground change, not a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** set every JavaRouters price in emerald with tabular numerals, directly beside its official price struck through (1.5px) in Graphite.",
+      "**Do** read model names, counts and prices from `/api/pricing` and show skeletons, an error with retry, or an empty message instead of placeholder numbers.",
+      "**Do** set model identifiers and code in monospace, exactly as the API expects them.",
+      "**Do** separate rows and sections with 1px hairlines at 70% of the border colour, and keep panels flat with a hairline outline.",
+      "**Do** keep emerald fills to the closing field and the auth value panel; everywhere else emerald is text, an underline, a dot or a 10% wash.",
+      "**Do** keep the New API attribution in the footer visible, linked to QuantumNous/new-api, at full muted contrast.",
+      "**Do** write UI text as i18n keys with Indonesian as the default language, and let headings wrap with balanced text.",
+      "**Do** honour reduced motion: content is visible without animation, and the rate-row settle is the only entrance motion."
+    ],
+    "donts": [
+      "**Don't** use gradients, glass or blur, kickers or eyebrow labels above headings, or icon tiles; the direction contract rules them out and the build carries none.",
+      "**Don't** introduce a second accent hue or use emerald decoratively.",
+      "**Don't** add shadows to cards, the rate board or the code panel; the scrolled header is the only shadow.",
+      "**Don't** hard-code model counts, prices or the savings percentage.",
+      "**Don't** add testimonial strips, customer logo walls or usage statistics; none exist to show.",
+      "**Don't** show Rupiah, QRIS or bank-transfer payment marks until such a payment method exists.",
+      "**Don't** remove, hide, dim or restyle away the New API / QuantumNous attribution.",
+      "**Don't** restyle the console from this system; it keeps the upstream layout and takes only the emerald tokens."
+    ]
+  }
+}

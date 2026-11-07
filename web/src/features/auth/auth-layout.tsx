@@ -19,7 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { Skeleton } from '@/components/ui/skeleton'
+import { AuthValuePanel } from '@/features/javarouters/layout/auth-value-panel'
 import { useSystemConfig } from '@/hooks/use-system-config'
 
 type AuthLayoutProps = {
@@ -31,33 +33,42 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   const { systemName, logo, loading } = useSystemConfig()
 
   return (
-    <div className='relative grid h-svh max-w-none'>
-      <Link
-        to='/'
-        className='absolute top-4 left-4 z-10 flex items-center gap-2 transition-opacity hover:opacity-80 sm:top-8 sm:left-8'
-      >
-        <div className='relative h-8 w-8'>
-          {loading ? (
-            <Skeleton className='absolute inset-0 rounded-full' />
-          ) : (
-            <img
-              src={logo}
-              alt={t('Logo')}
-              className='h-8 w-8 rounded-full object-cover'
-            />
-          )}
+    <div className='bg-background grid min-h-svh lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]'>
+      <div className='flex flex-col'>
+        <div className='flex h-16 items-center justify-between px-4 sm:px-8'>
+          <Link
+            to='/'
+            className='flex items-center gap-2.5 transition-opacity hover:opacity-80'
+          >
+            <span className='relative size-7'>
+              {loading ? (
+                <Skeleton className='absolute inset-0 rounded-md' />
+              ) : (
+                <img
+                  src={logo}
+                  alt={t('Logo')}
+                  className='size-7 rounded-md object-contain'
+                />
+              )}
+            </span>
+            {loading ? (
+              <Skeleton className='h-5 w-24' />
+            ) : (
+              <span className='font-display text-base font-semibold tracking-tight'>
+                {systemName}
+              </span>
+            )}
+          </Link>
+          <LanguageSwitcher />
         </div>
-        {loading ? (
-          <Skeleton className='h-6 w-24' />
-        ) : (
-          <h1 className='text-xl font-medium'>{systemName}</h1>
-        )}
-      </Link>
-      <div className='container flex items-center pt-16 sm:pt-0'>
-        <div className='mx-auto flex w-full flex-col justify-center space-y-2 px-4 py-8 sm:w-[480px] sm:p-8'>
-          {children}
+        <div className='flex flex-1 items-center justify-center px-4 py-10 sm:px-8'>
+          {/* Smaller radius keeps 32px inputs and buttons from turning into pills. */}
+          <div className='flex w-full max-w-[420px] flex-col space-y-2 [--radius:0.625rem]'>
+            {children}
+          </div>
         </div>
       </div>
+      <AuthValuePanel />
     </div>
   )
 }

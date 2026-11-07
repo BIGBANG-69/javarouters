@@ -16,8 +16,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { JavaRoutersPublicHeader as PublicHeader } from '@/features/javarouters/layout/public-header'
+
 import type { TopNavLink } from '../types'
-import { PublicHeader, type PublicHeaderProps } from './public-header'
+import type { PublicHeaderProps } from './public-header'
 
 type PublicLayoutProps = {
   children: React.ReactNode

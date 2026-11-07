@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 export const INTERFACE_LANGUAGE_OPTIONS = [
+  { code: 'id', label: 'Bahasa Indonesia' },
   { code: 'zhCN', label: '简体中文' },
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Français' },
@@ -28,6 +29,9 @@ export const INTERFACE_LANGUAGE_OPTIONS = [
 
 export type InterfaceLanguageCode =
   (typeof INTERFACE_LANGUAGE_OPTIONS)[number]['code']
+
+/** The interface language a visitor gets before choosing one. */
+export const DEFAULT_INTERFACE_LANGUAGE: InterfaceLanguageCode = 'id'
 
 export function normalizeInterfaceLanguage(value?: string | null): string {
   if (!value) return 'en'

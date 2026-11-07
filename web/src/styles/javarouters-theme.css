@@ -17,6 +17,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
+/* Display face for JavaRouters public pages (headings, brand, step numbers). */
+@import '@fontsource-variable/schibsted-grotesk';
+
 /*
  * JavaRouters palette: emerald accents on the white base canvas.
  *
@@ -67,4 +70,38 @@ For commercial licensing, please contact support@quantumnous.com
   --sidebar-primary-foreground: oklch(0.262 0.051 172.552);
   --sidebar-accent-foreground: oklch(0.905 0.093 164.15);
   --sidebar-ring: oklch(0.765 0.177 163.223);
+}
+
+@theme inline {
+  --font-display: 'Schibsted Grotesk Variable', var(--font-ui-sans);
+}
+
+/* Browser surfaces carry the palette too. */
+:root {
+  accent-color: var(--primary);
+  caret-color: var(--primary);
+  scrollbar-color: color-mix(in oklch, var(--foreground) 22%, transparent)
+    transparent;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--primary) 22%, transparent);
+}
+
+/* Rate board rows settle in when the family tab changes. */
+@keyframes jr-rate-row-in {
+  from {
+    opacity: 0.35;
+    transform: translateY(6px);
+  }
+}
+
+.jr-rate-row {
+  animation: jr-rate-row-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jr-rate-row {
+    animation: none;
+  }
 }
