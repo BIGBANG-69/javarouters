@@ -299,3 +299,48 @@ describe('theme font selection', () => {
     expect(localStorage.getItem('newapi:theme:v1:font')).toBeNull()
   })
 })
+
+describe('light default theme', () => {
+  function mockSystemDarkMode() {
+    const matchMedia = window.matchMedia
+    vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({
+      ...matchMedia(query),
+      matches: query === '(prefers-color-scheme: dark)',
+    }))
+  }
+
+  function LightDefaultFixture() {
+    return (
+      <ThemeProvider defaultTheme='light'>
+        <ThemeCustomizationProvider>
+          <ThemeControls />
+        </ThemeCustomizationProvider>
+      </ThemeProvider>
+    )
+  }
+
+  it('starts light without a saved mode even when the system is dark', () => {
+    mockSystemDarkMode()
+
+    render(<LightDefaultFixture />)
+
+    expect(screen.getByLabelText('Theme mode')).toHaveTextContent('light')
+    expect(document.documentElement).toHaveClass('light')
+    expect(document.documentElement).not.toHaveClass('dark')
+  })
+
+  it('returns to light after a reset from a saved dark mode', async () => {
+    mockSystemDarkMode()
+    localStorage.setItem('newapi:theme:v1:mode', 'dark')
+    const user = userEvent.setup()
+    render(<LightDefaultFixture />)
+
+    expect(document.documentElement).toHaveClass('dark')
+
+    await user.click(screen.getByRole('button', { name: 'Reset' }))
+
+    expect(screen.getByLabelText('Theme mode')).toHaveTextContent('light')
+    expect(document.documentElement).toHaveClass('light')
+    expect(localStorage.getItem('newapi:theme:v1:mode')).toBeNull()
+  })
+})

@@ -1,0 +1,70 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+
+/*
+ * JavaRouters palette: emerald accents on the white base canvas.
+ *
+ * Overrides only the accent tokens of the base palette in ./theme.css, so the
+ * default look (no `data-theme-preset`) is green from the first paint while
+ * backgrounds, cards and text stay neutral. Presets in ./theme-presets.css
+ * still win, because they are declared on <body> and override these
+ * inherited :root values.
+ *
+ * Light primary is emerald-700: white button text on it meets WCAG AA
+ * (about 5.5:1). Emerald-600 is kept for rings and charts, where no text
+ * sits on top of it.
+ */
+
+:root {
+  --primary: oklch(0.508 0.118 165.612);
+  --primary-foreground: oklch(1 0 0);
+  --secondary-foreground: oklch(0.432 0.095 166.913);
+  --ring: oklch(0.596 0.145 163.225);
+  --chart-1: oklch(0.596 0.145 163.225);
+  --chart-2: oklch(0.704 0.14 182.503);
+  --chart-3: oklch(0.609 0.126 221.723);
+  --chart-4: oklch(0.768 0.233 130.85);
+  --chart-5: oklch(0.845 0.143 164.978);
+  --overview-accent-1: oklch(0.596 0.145 163.225);
+  --overview-accent-2: oklch(0.704 0.14 182.503);
+  --overview-accent-3: oklch(0.609 0.126 221.723);
+  --sidebar-primary: oklch(0.508 0.118 165.612);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent-foreground: oklch(0.508 0.118 165.612);
+  --sidebar-ring: oklch(0.596 0.145 163.225);
+}
+
+.dark {
+  --primary: oklch(0.696 0.17 162.48);
+  --primary-foreground: oklch(0.262 0.051 172.552);
+  --secondary-foreground: oklch(0.905 0.093 164.15);
+  --ring: oklch(0.765 0.177 163.223);
+  --chart-1: oklch(0.765 0.177 163.223);
+  --chart-2: oklch(0.777 0.152 181.912);
+  --chart-3: oklch(0.789 0.154 211.53);
+  --chart-4: oklch(0.841 0.238 128.85);
+  --chart-5: oklch(0.905 0.093 164.15);
+  --overview-accent-1: oklch(0.765 0.177 163.223);
+  --overview-accent-2: oklch(0.777 0.152 181.912);
+  --overview-accent-3: oklch(0.789 0.154 211.53);
+  --sidebar-primary: oklch(0.696 0.17 162.48);
+  --sidebar-primary-foreground: oklch(0.262 0.051 172.552);
+  --sidebar-accent-foreground: oklch(0.905 0.093 164.15);
+  --sidebar-ring: oklch(0.765 0.177 163.223);
+}
