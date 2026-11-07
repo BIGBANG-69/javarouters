@@ -1,0 +1,15 @@
+{
+  "markup": 0.7,
+  "cache_read_ratio": 0.1,
+  "min_margin": 0.2,
+  "max_removal_ratio": 0.2,
+  "channels": [
+    { "id": 1, "family": "claude", "pattern": "^claude-" },
+    { "id": 2, "family": "gpt", "pattern": "^gpt-(5|6)" },
+    { "id": 3, "family": "gemini", "pattern": "^gemini-" },
+    { "id": 4, "family": "grok", "pattern": "^grok-4" },
+    { "id": 5, "family": "opensource", "pattern": "^(deepseek|kimi|glm|qwen3|minimax|mimo|hy\\d|longcat|ling-|step-|mistral|muse-)" }
+  ],
+  "exclude": [],
+  "overrides": {}
+}

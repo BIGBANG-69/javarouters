@@ -1,0 +1,16 @@
+[Unit]
+Description=Sync JavaRouters InferHub channels and prices with the InferHub catalog
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/opt/javarouters/inferhub-sync
+EnvironmentFile=/opt/javarouters/inferhub-sync.env
+ExecStart=/usr/bin/python3 /opt/javarouters/inferhub-sync/inferhub_sync.py --config /opt/javarouters/inferhub-sync/config.json
+TimeoutStartSec=300
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/javarouters/inferhub-sync
