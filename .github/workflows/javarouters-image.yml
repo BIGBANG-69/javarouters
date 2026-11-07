@@ -41,8 +41,14 @@ jobs:
       - name: Typecheck
         run: bun check -b
 
-      - name: Lint
-        run: bun run lint
+      # Upstream does not lint the whole tree in CI and carries existing
+      # findings; lint the files JavaRouters changes, as web/AGENTS.md asks.
+      - name: Lint JavaRouters changes
+        run: >-
+          bunx oxlint -c .oxlintrc.json
+          src/main.tsx
+          src/context/__tests__/theme-boot-script.test.ts
+          src/context/__tests__/theme-preferences.test.tsx
 
       - name: Test
         run: bun run test
