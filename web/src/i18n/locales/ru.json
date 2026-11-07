@@ -7446,6 +7446,17 @@
     "Zhipu": "Zhipu",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "Price currency": "Валюта цен",
+    "rate set by the administrator": "курс задан администратором",
+    "ECB reference rate, {{date}}": "референсный курс ЕЦБ, {{date}}",
+    "ECB reference rate": "референсный курс ЕЦБ",
+    "Rupiah prices are estimates at 1 USD = {{rate}} ({{source}}). Balances and billing stay in USD.": "Цены в рупиях — оценка по курсу 1 USD = {{rate}} ({{source}}). Баланс и списания остаются в USD.",
+    "Rupiah rate on the price page": "Курс рупии на странице цен",
+    "Automatic (ECB reference rate)": "Автоматически (референсный курс ЕЦБ)",
+    "Manual": "Вручную",
+    "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "Цены в рупиях на публичной странице цен — только оценка для отображения; баланс и списания остаются в USD.",
+    "IDR per USD": "IDR за 1 USD",
+    "e.g. 16500 means 1 USD = Rp 16,500": "например, 16500 означает 1 USD = 16 500 Rp"
   }
 }

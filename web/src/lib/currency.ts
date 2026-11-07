@@ -228,6 +228,34 @@ function getBillingDisplayMeta(config: CurrencyConfig): DisplayMeta {
   return meta
 }
 
+/**
+ * A display currency chosen on a page, overriding the admin-configured currency for
+ * billing prices. The public price page uses it for its IDR/USD switch.
+ *
+ * Amounts stay in USD; this only converts them for display. While it is set,
+ * `formatBillingCurrencyFromUSD()` and `getCurrencyLabel()` use it. Set it through the
+ * page's own hook so it is cleared when the page unmounts; it must never leak into
+ * balances, payments or other pages.
+ */
+export type BillingDisplayCurrency = {
+  /** ISO 4217 code, e.g. "IDR" */
+  currencyCode: string
+  /** Units of this currency per 1 USD */
+  exchangeRate: number
+  /** Maximum fraction digits when |value| >= 1 */
+  maxFractionDigitsLarge?: number
+  /** Intl locale for this currency's numbers (already converted with toIntlLocale) */
+  locale?: Intl.LocalesArgument
+}
+
+let billingDisplayCurrency: BillingDisplayCurrency | null = null
+
+export function setBillingDisplayCurrency(
+  value: BillingDisplayCurrency | null
+): void {
+  billingDisplayCurrency = value
+}
+
 function mergeOptions(
   options?: CurrencyFormatOptions
 ): ResolvedCurrencyFormatOptions {
@@ -474,9 +502,30 @@ export function formatBillingCurrencyFromUSD(
 ): string {
   if (amountUSD == null || Number.isNaN(amountUSD)) return '-'
 
+  const merged = mergeOptions(options)
+  const override = billingDisplayCurrency
+  if (override) {
+    return formatCurrencyValue(
+      amountUSD * override.exchangeRate,
+      {
+        ...merged,
+        digitsLarge: Math.min(
+          merged.digitsLarge,
+          override.maxFractionDigitsLarge ?? merged.digitsLarge
+        ),
+        locale: merged.locale ?? override.locale,
+      },
+      {
+        kind: 'currency',
+        symbol: override.currencyCode,
+        currencyCode: override.currencyCode,
+        exchangeRate: override.exchangeRate,
+      }
+    )
+  }
+
   const { config } = getCurrencyDisplay()
   const meta = getBillingDisplayMeta(config)
-  const merged = mergeOptions(options)
   const value =
     meta.kind === 'currency' || meta.kind === 'custom'
       ? amountUSD * meta.exchangeRate
@@ -544,6 +593,8 @@ export function formatQuotaWithCurrency(
  * - Form field labels
  */
 export function getCurrencyLabel(): string {
+  if (billingDisplayCurrency) return billingDisplayCurrency.currencyCode
+
   const { config, meta } = getCurrencyDisplay()
 
   if (meta.kind === 'tokens') {

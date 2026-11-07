@@ -98,6 +98,13 @@ const BILLING_SECTIONS = [
             custom_currency_exchange_rate:
               settings['general_setting.custom_currency_exchange_rate'] ?? 1,
           },
+          idr_rate_setting: {
+            mode:
+              settings['idr_rate_setting.mode'] === 'manual'
+                ? 'manual'
+                : 'auto',
+            manual_rate: settings['idr_rate_setting.manual_rate'] ?? 0,
+          },
         }}
       />
     ),

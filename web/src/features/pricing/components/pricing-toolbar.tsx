@@ -44,6 +44,7 @@ import {
 } from '@/components/ui/sheet'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
+import type { PriceCurrency } from '@/stores/price-currency-store'
 
 import { getSortLabels, type SortOption, type ViewMode } from '../constants'
 import type { PricingModel, PricingVendor, TokenUnit } from '../types'
@@ -58,6 +59,11 @@ export interface PricingToolbarProps {
   onTokenUnitChange: (value: TokenUnit) => void
   showRechargePrice: boolean
   onRechargePriceChange: (value: boolean) => void
+  /** Hide the Standard/Recharge switch when both modes show the same prices. */
+  showRechargeToggle?: boolean
+  /** Display currency; the IDR/USD switch shows only when this and its handler are set. */
+  currency?: PriceCurrency
+  onCurrencyChange?: (value: PriceCurrency) => void
   viewMode: ViewMode
   onViewModeChange: (value: ViewMode) => void
   quotaTypeFilter: string
@@ -120,20 +126,42 @@ export function PricingToolbar(props: PricingToolbarProps) {
         </div>
 
         <div className='flex min-w-0 flex-wrap items-center gap-2'>
-          <ToggleGroup
-            value={[props.showRechargePrice ? 'recharge' : 'standard']}
-            onValueChange={(values) => {
-              if (values.length > 0) {
-                props.onRechargePriceChange(values[0] === 'recharge')
-              }
-            }}
-            variant='outline'
-            size='sm'
-            aria-label={t('Price display mode')}
-          >
-            <ToggleGroupItem value='standard'>{t('Standard')}</ToggleGroupItem>
-            <ToggleGroupItem value='recharge'>{t('Recharge')}</ToggleGroupItem>
-          </ToggleGroup>
+          {props.currency && props.onCurrencyChange && (
+            <ToggleGroup
+              value={[props.currency]}
+              onValueChange={(values) => {
+                if (values[0] === 'IDR' || values[0] === 'USD') {
+                  props.onCurrencyChange?.(values[0])
+                }
+              }}
+              variant='outline'
+              size='sm'
+              aria-label={t('Price currency')}
+            >
+              <ToggleGroupItem value='IDR'>IDR</ToggleGroupItem>
+              <ToggleGroupItem value='USD'>USD</ToggleGroupItem>
+            </ToggleGroup>
+          )}
+          {props.showRechargeToggle !== false && (
+            <ToggleGroup
+              value={[props.showRechargePrice ? 'recharge' : 'standard']}
+              onValueChange={(values) => {
+                if (values.length > 0) {
+                  props.onRechargePriceChange(values[0] === 'recharge')
+                }
+              }}
+              variant='outline'
+              size='sm'
+              aria-label={t('Price display mode')}
+            >
+              <ToggleGroupItem value='standard'>
+                {t('Standard')}
+              </ToggleGroupItem>
+              <ToggleGroupItem value='recharge'>
+                {t('Recharge')}
+              </ToggleGroupItem>
+            </ToggleGroup>
+          )}
           <ToggleGroup
             value={[props.tokenUnit]}
             onValueChange={(values) => {

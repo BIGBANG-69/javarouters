@@ -114,6 +114,9 @@ func main() {
 	go model.SyncOptions(common.SyncFrequency)
 	go controller.SyncTaskPlugins()
 
+	// USD to IDR reference rate for the public price page (display only)
+	go service.StartIDRExchangeRateRefresher()
+
 	// 周期性重载授权策略，保证多节点/多 master 部署下权限变更能传播到每个实例
 	go authz.StartPolicySync(common.SyncFrequency)
 

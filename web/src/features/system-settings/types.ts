@@ -283,6 +283,8 @@ export type BillingSettings = {
   'general_setting.quota_display_type': string
   'general_setting.custom_currency_symbol': string
   'general_setting.custom_currency_exchange_rate': number
+  'idr_rate_setting.mode': string
+  'idr_rate_setting.manual_rate': number
   DisplayInCurrencyEnabled: boolean
   DisplayTokenStatEnabled: boolean
   ModelPrice: string

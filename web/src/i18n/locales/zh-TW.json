@@ -7446,6 +7446,17 @@
     "Zhipu": "智譜",
     "Zhipu GLM": "智譜GLM",
     "Zhipu V4": "智譜 V4",
-    "Zoom": "縮放"
+    "Zoom": "縮放",
+    "Price currency": "價格幣別",
+    "rate set by the administrator": "管理員設定的匯率",
+    "ECB reference rate, {{date}}": "歐洲央行參考匯率，{{date}}",
+    "ECB reference rate": "歐洲央行參考匯率",
+    "Rupiah prices are estimates at 1 USD = {{rate}} ({{source}}). Balances and billing stay in USD.": "印尼盾價格為估算值，按 1 USD = {{rate}}（{{source}}）換算。餘額與計費仍以 USD 計。",
+    "Rupiah rate on the price page": "價格頁印尼盾匯率",
+    "Automatic (ECB reference rate)": "自動（歐洲央行參考匯率）",
+    "Manual": "手動",
+    "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "公開價格頁上的印尼盾價格僅為顯示用估算；餘額與計費仍以 USD 計。",
+    "IDR per USD": "每 USD 兌 IDR",
+    "e.g. 16500 means 1 USD = Rp 16,500": "例如 16500 表示 1 USD = Rp 16,500"
   }
 }

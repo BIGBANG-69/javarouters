@@ -41,6 +41,8 @@ const STATUS_RELATED_KEYS = new Set([
   'general_setting.quota_display_type',
   'general_setting.custom_currency_symbol',
   'general_setting.custom_currency_exchange_rate',
+  'idr_rate_setting.mode',
+  'idr_rate_setting.manual_rate',
   'oidc.display_name',
   'ServerAddress',
   'passkey.enabled',

@@ -72,8 +72,23 @@ const createPricingSchema = (t: (key: string) => string) =>
           .min(0.0001, t('Exchange rate must be greater than 0'))
           .optional(),
       }),
+      idr_rate_setting: z.object({
+        mode: z.enum(['auto', 'manual']),
+        manual_rate: z.coerce.number().min(0, t('Value must be at least 0')),
+      }),
     })
     .superRefine((data, ctx) => {
+      if (
+        data.idr_rate_setting.mode === 'manual' &&
+        !(data.idr_rate_setting.manual_rate > 0)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['idr_rate_setting', 'manual_rate'],
+          message: t('Exchange rate must be greater than 0'),
+        })
+      }
+
       const displayType = data.general_setting.quota_display_type
 
       if (displayType === 'CUSTOM') {
@@ -137,6 +152,7 @@ export function PricingSection({ defaultValues }: PricingSectionProps) {
     })
 
   const displayType = form.watch('general_setting.quota_display_type') ?? 'USD'
+  const idrRateMode = form.watch('idr_rate_setting.mode')
   const displayInCurrencyEnabled = form.watch('DisplayInCurrencyEnabled')
   const showTokensOnlyOption = displayType === 'TOKENS'
   const showQuotaPerUnit =
@@ -238,9 +254,7 @@ export function PricingSection({ defaultValues }: PricingSectionProps) {
                     <FormLabel>
                       {displayType === 'CNY'
                         ? t('CNY per USD')
-                        : displayType === 'USD'
-                          ? t('USD Exchange Rate')
-                          : t('USD Exchange Rate')}
+                        : t('USD Exchange Rate')}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -320,6 +334,68 @@ export function PricingSection({ defaultValues }: PricingSectionProps) {
                 />
               </div>
             )}
+
+            <div className='grid gap-4 sm:grid-cols-2'>
+              <FormField
+                control={form.control}
+                name='idr_rate_setting.mode'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Rupiah rate on the price page')}</FormLabel>
+                    <Select
+                      items={[
+                        { value: 'auto', label: t('Automatic (ECB reference rate)') },
+                        { value: 'manual', label: t('Manual') },
+                      ]}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent alignItemWithTrigger={false}>
+                        <SelectGroup>
+                          <SelectItem value='auto'>
+                            {t('Automatic (ECB reference rate)')}
+                          </SelectItem>
+                          <SelectItem value='manual'>{t('Manual')}</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      {t(
+                        'Rupiah prices on the public price page are display estimates; balances and billing stay in USD.'
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {idrRateMode === 'manual' && (
+                <FormField
+                  control={form.control}
+                  name='idr_rate_setting.manual_rate'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('IDR per USD')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          step='1'
+                          {...safeNumberFieldProps(field)}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t('e.g. 16500 means 1 USD = Rp 16,500')}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
 
             {showDisplayInCurrencyOption && (
               <FormField

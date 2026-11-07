@@ -7446,6 +7446,17 @@
     "Zhipu": "Zhipu",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "Price currency": "Price currency",
+    "rate set by the administrator": "rate set by the administrator",
+    "ECB reference rate, {{date}}": "ECB reference rate, {{date}}",
+    "ECB reference rate": "ECB reference rate",
+    "Rupiah prices are estimates at 1 USD = {{rate}} ({{source}}). Balances and billing stay in USD.": "Rupiah prices are estimates at 1 USD = {{rate}} ({{source}}). Balances and billing stay in USD.",
+    "Rupiah rate on the price page": "Rupiah rate on the price page",
+    "Automatic (ECB reference rate)": "Automatic (ECB reference rate)",
+    "Manual": "Manual",
+    "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.",
+    "IDR per USD": "IDR per USD",
+    "e.g. 16500 means 1 USD = Rp 16,500": "e.g. 16500 means 1 USD = Rp 16,500"
   }
 }

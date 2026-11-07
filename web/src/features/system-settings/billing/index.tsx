@@ -37,6 +37,8 @@ const defaultBillingSettings: BillingSettings = {
   'general_setting.quota_display_type': 'USD',
   'general_setting.custom_currency_symbol': '¤',
   'general_setting.custom_currency_exchange_rate': 1,
+  'idr_rate_setting.mode': 'auto',
+  'idr_rate_setting.manual_rate': 0,
   DisplayInCurrencyEnabled: true,
   DisplayTokenStatEnabled: true,
   ModelPrice: '',

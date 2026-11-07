@@ -46,6 +46,7 @@ func GetStatus(c *gin.Context) {
 	defer common.OptionMapRWMutex.RUnlock()
 
 	legalSetting := system_setting.GetLegalSettings()
+	idrRate := service.GetIDRExchangeRate()
 
 	data := gin.H{
 		"version":                     common.Version,
@@ -96,7 +97,12 @@ func GetStatus(c *gin.Context) {
 
 		"usd_exchange_rate": operation_setting.USDExchangeRate,
 		"price":             operation_setting.Price,
-		"stripe_unit_price": setting.StripeUnitPrice,
+
+		// Display-only USD to IDR rate for Rupiah estimates on the public price page.
+		"idr_exchange_rate":        idrRate.Rate,
+		"idr_exchange_rate_source": idrRate.Source,
+		"idr_exchange_rate_date":   idrRate.Date,
+		"stripe_unit_price":        setting.StripeUnitPrice,
 
 		// 面板启用开关
 		"api_info_enabled":      cs.ApiInfoEnabled,

@@ -173,6 +173,12 @@ export interface SystemStatus {
   usd_exchange_rate?: number
   custom_currency_symbol?: string
   custom_currency_exchange_rate?: number
+  /** Display-only USD to IDR rate for the public price page; 0 when unknown */
+  idr_exchange_rate?: number
+  /** "ecb" or "manual"; empty when no rate is known */
+  idr_exchange_rate_source?: string
+  /** ECB reference date (YYYY-MM-DD); empty for a manual rate */
+  idr_exchange_rate_date?: string
   demo_site_enabled?: boolean
   user_agreement_enabled?: boolean
   privacy_policy_enabled?: boolean

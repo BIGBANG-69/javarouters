@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { render, screen, within } from '@testing-library/react'
+import { act, render, renderHook, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -25,8 +25,18 @@ import {
   PricingToolbar,
   type PricingToolbarProps,
 } from '../components/pricing-toolbar'
+import { useFilters } from '../hooks/use-filters'
 import { filterByQuotaType } from '../lib/filters'
 import type { PricingModel } from '../types'
+
+// The /pricing route's search params, read by useFilters through the router.
+const routerSearch = vi.hoisted(() => ({
+  current: {} as Record<string, unknown>,
+}))
+vi.mock('@tanstack/react-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@tanstack/react-router')>()),
+  useSearch: () => routerSearch.current,
+}))
 
 function toolbarProps(): PricingToolbarProps {
   return {
@@ -296,6 +306,74 @@ describe('pricing controls', () => {
       'aria-pressed',
       'false'
     )
+  })
+
+  it.each<{ search: Record<string, unknown>; expected: string }>([
+    { search: {}, expected: 'table' },
+    { search: { view: 'card' }, expected: 'card' },
+    { search: { view: 'unknown' }, expected: 'table' },
+  ])(
+    'opens the price page in $expected view for search $search',
+    (testCase) => {
+      routerSearch.current = testCase.search
+      const { result } = renderHook(() => useFilters([]))
+      expect(result.current.viewMode).toBe(testCase.expected)
+      routerSearch.current = {}
+    }
+  )
+
+  it('returns to the default table view after switching to cards and back', () => {
+    routerSearch.current = {}
+    const { result } = renderHook(() => useFilters([]))
+    act(() => result.current.setViewMode('card'))
+    expect(result.current.viewMode).toBe('card')
+    act(() => result.current.setViewMode('table'))
+    expect(result.current.viewMode).toBe('table')
+  })
+
+  it('switches the price currency to USD and marks the selected currency pressed', async () => {
+    const props = toolbarProps()
+    const onCurrencyChange = vi.fn()
+    const user = userEvent.setup()
+    const { rerender } = render(
+      <PricingToolbar
+        {...props}
+        currency='IDR'
+        onCurrencyChange={onCurrencyChange}
+      />
+    )
+    const group = screen.getByRole('group', { name: 'Price currency' })
+    expect(within(group).getByRole('button', { name: 'IDR' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    await user.click(within(group).getByRole('button', { name: 'USD' }))
+    expect(onCurrencyChange).toHaveBeenCalledWith('USD')
+    rerender(
+      <PricingToolbar
+        {...props}
+        currency='USD'
+        onCurrencyChange={onCurrencyChange}
+      />
+    )
+    expect(within(group).getByRole('button', { name: 'USD' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+  })
+
+  it('omits the currency switch when no display currency is offered', () => {
+    render(<PricingToolbar {...toolbarProps()} />)
+    expect(
+      screen.queryByRole('group', { name: 'Price currency' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the recharge switch when recharge prices equal standard prices', () => {
+    render(<PricingToolbar {...toolbarProps()} showRechargeToggle={false} />)
+    expect(
+      screen.queryByRole('button', { name: 'Recharge' })
+    ).not.toBeInTheDocument()
   })
 
   it('switches to table view with the keyboard and exposes the selected view', async () => {

@@ -7446,6 +7446,17 @@
     "Zhipu": "Zhipu",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V 4",
-    "Zoom": "ズーム"
+    "Zoom": "ズーム",
+    "Price currency": "価格の通貨",
+    "rate set by the administrator": "管理者が設定したレート",
+    "ECB reference rate, {{date}}": "ECB参照レート、{{date}}",
+    "ECB reference rate": "ECB参照レート",
+    "Rupiah prices are estimates at 1 USD = {{rate}} ({{source}}). Balances and billing stay in USD.": "ルピア価格は 1 USD = {{rate}}（{{source}}）で換算した概算です。残高と請求は USD のままです。",
+    "Rupiah rate on the price page": "価格ページのルピアレート",
+    "Automatic (ECB reference rate)": "自動（ECB参照レート）",
+    "Manual": "手動",
+    "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "公開価格ページのルピア価格は表示用の概算です。残高と請求は USD のままです。",
+    "IDR per USD": "1 USD あたりの IDR",
+    "e.g. 16500 means 1 USD = Rp 16,500": "例：16500 は 1 USD = Rp 16,500 を意味します"
   }
 }
