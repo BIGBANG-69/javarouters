@@ -166,7 +166,7 @@ components:
 
 JavaRouters' public face is a money changer's rate board for AI models. The governing artifact is a live price table: each row sets the provider's official price, struck through, beside the JavaRouters price in emerald tabular figures. Everything else on the page (headline, one changed line of code, three steps, four facts, one emerald closing field) exists to lead the eye to that board and then to "Buat akun". The surface reads clean and professional: white ground, near-black ink, one emerald, 1px hairline rules, generous section air, and no ornament that the rate board does not earn.
 
-Scope is the public surface only: the landing page, the shared public header, the landing footer, and the auth layout (sign-in, sign-up, password reset). The console keeps the upstream New API layout and inherits only the emerald accent tokens from `web/src/styles/javarouters-theme.css`, which override the base palette's accent slots so every page is green from first paint. Light mode is the default; dark mode swaps the ground to charcoal and the accent to a brighter emerald. The default UI language is Indonesian, and all copy is i18n keyed, so layouts must tolerate Indonesian strings that run longer than English.
+Scope is the public surface only: the landing page, the price page (`/pricing`, the full kurs board), the shared public header, the landing footer, and the auth layout (sign-in, sign-up, password reset). The console keeps the upstream New API layout and inherits only the emerald accent tokens from `web/src/styles/javarouters-theme.css`, which override the base palette's accent slots so every page is green from first paint. Light mode is the default; dark mode swaps the ground to charcoal and the accent to a brighter emerald. The default UI language is Indonesian, and all copy is i18n keyed, so layouts must tolerate Indonesian strings that run longer than English.
 
 The system is built on New API (QuantumNous, AGPLv3). The upstream attribution in the footer is a fixed constraint, not a styling choice: it stays visible, linked and readable on every page that carries the footer.
 
@@ -276,6 +276,15 @@ The kurs board itself: a hairline-outlined Paper panel (22.4px radius) holding a
 - **Motion:** on tab change rows settle in from 35% opacity and 6px below, 420ms `cubic-bezier(0.16, 1, 0.3, 1)`, staggered 45ms per row. Content is visible without motion and the animation is off under reduced motion.
 - **States:** skeleton rows while loading; a centred muted message with a small outline "Coba lagi" button on error; a muted empty message when no models exist.
 - **Footer strip:** Mist at 30% with the note that struck prices are official prices, and an emerald text link "Lihat semua model dan harga" with an arrow.
+
+### Price Board (the `/pricing` page)
+The full kurs board: every sold model in one table, built from the same Price Cell and Savings Chip as the landing rate board. It replaces the upstream New API pricing page (sidebar filters, cards, generic data table), which stays in the tree unrouted for upstream merges.
+- **Page head:** left-aligned Headline Large title "Model & Harga", one Body Lead line with the live model count, and "Buat akun" (or "Buka konsol") plus an outline "Baca dokumentasi" when a docs link is set, aligned to the bottom right from 1024px.
+- **Top bar:** line tabs "Semua model" and the families present in the catalog, each with its live count in Graphite tabular numerals; one horizontally scrollable line on narrow screens. The emerald sync dot note sits at the right.
+- **Controls row:** the shared search field (model or provider), then the IDR/USD toggle and a sort select (by family, cheapest input, name).
+- **Rows:** model name in monospace with the vendor below in 0.75rem Graphite; Input and Output as struck official beside emerald sell; Cache read in Ink (hidden below 768px); Savings chip (hidden below 640px). Rows are clickable and the model name is a real button; selection opens the shared model details drawer. Models not priced per token span the price columns with "Harga khusus, lihat detail".
+- **Currency:** Rupiah amounts are display estimates from the gateway's IDR rate; the footer strip states the rate, its source and date, and that balances and billing stay in USD. This is not a payment claim.
+- **Motion and states:** the rate-row settle, staggered for the first 12 rows only; skeleton rows while loading; error with "Coba lagi"; a no-match message with a "Hapus pencarian" button.
 
 ### Savings Chip
 - **Style:** Emerald Wash ground, emerald 600-weight 0.75rem text, tabular numerals, 12.8px radius, 4px by 8px padding. Shows "Hemat 30%" computed from the live markup, never typed in.

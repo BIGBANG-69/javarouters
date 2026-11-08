@@ -271,6 +271,19 @@
     "{{count}} providers": "{{count}} penyedia",
     "{{count}} tiers": "{{count}} tingkat",
     "{{currency}} / {{unit}} tokens": "{{currency}} / {{unit}} token",
-    "{{unit}} tokens": "{{unit}} token"
+    "{{unit}} tokens": "{{unit}} token",
+    "All models": "Semua model",
+    "By model family": "Per keluarga model",
+    "Cheapest input first": "Input termurah dulu",
+    "Name (A-Z)": "Nama (A-Z)",
+    "Sort models": "Urutkan model",
+    "Search model or provider": "Cari model atau penyedia",
+    "Cache read": "Baca cache",
+    "Custom pricing, see details": "Harga khusus, lihat detail",
+    "No models match \"{{query}}\".": "Tidak ada model yang cocok dengan \"{{query}}\".",
+    "Read the docs": "Baca dokumentasi",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "Harga yang dicoret adalah harga resmi penyedia. Pilih model untuk melihat endpoint dan contoh kodenya.",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "{{count}} model AI dalam satu API key. Harga resmi dicoret di samping harga kami.",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "Semua model AI dalam satu API key. Harga resmi dicoret di samping harga kami."
   }
 }

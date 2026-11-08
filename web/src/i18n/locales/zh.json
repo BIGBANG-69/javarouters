@@ -7457,6 +7457,18 @@
     "Manual": "手动",
     "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "公开价格页上的印尼盾价格仅为显示用估算；余额和计费仍以 USD 计。",
     "IDR per USD": "每 USD 兑 IDR",
-    "e.g. 16500 means 1 USD = Rp 16,500": "例如 16500 表示 1 USD = Rp 16,500"
+    "e.g. 16500 means 1 USD = Rp 16,500": "例如 16500 表示 1 USD = Rp 16,500",
+    "By model family": "按模型系列",
+    "Cheapest input first": "输入价格从低到高",
+    "Name (A-Z)": "名称（A-Z）",
+    "Sort models": "模型排序",
+    "Search model or provider": "搜索模型或供应商",
+    "Cache read": "缓存读取",
+    "Custom pricing, see details": "特殊计价，查看详情",
+    "No models match \"{{query}}\".": "没有匹配“{{query}}”的模型。",
+    "Read the docs": "阅读文档",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "划线价格为供应商官方价格。选择模型可查看其端点和代码示例。",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "一个 API 密钥即可使用 {{count}} 个 AI 模型。官方价格以划线显示在我们的价格旁。",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "一个 API 密钥即可使用所有 AI 模型。官方价格以划线显示在我们的价格旁。"
   }
 }

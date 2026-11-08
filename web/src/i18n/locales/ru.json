@@ -7457,6 +7457,18 @@
     "Manual": "Вручную",
     "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "Цены в рупиях на публичной странице цен — только оценка для отображения; баланс и списания остаются в USD.",
     "IDR per USD": "IDR за 1 USD",
-    "e.g. 16500 means 1 USD = Rp 16,500": "например, 16500 означает 1 USD = 16 500 Rp"
+    "e.g. 16500 means 1 USD = Rp 16,500": "например, 16500 означает 1 USD = 16 500 Rp",
+    "By model family": "По семействам моделей",
+    "Cheapest input first": "Сначала дешёвый ввод",
+    "Name (A-Z)": "Название (A-Z)",
+    "Sort models": "Сортировка моделей",
+    "Search model or provider": "Поиск модели или провайдера",
+    "Cache read": "Чтение кэша",
+    "Custom pricing, see details": "Особая цена, см. подробности",
+    "No models match \"{{query}}\".": "Нет моделей по запросу «{{query}}».",
+    "Read the docs": "Документация",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "Зачёркнутые цены — официальные цены провайдеров. Выберите модель, чтобы увидеть её эндпоинты и примеры кода.",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "{{count}} моделей ИИ за одним API-ключом. Официальные цены зачёркнуты рядом с нашими.",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "Все модели ИИ за одним API-ключом. Официальные цены зачёркнуты рядом с нашими."
   }
 }

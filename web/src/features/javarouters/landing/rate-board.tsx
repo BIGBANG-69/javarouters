@@ -50,9 +50,10 @@ type RateBoardProps = {
   onRetry: () => void
 }
 
-function PriceCell(props: { official: number; sell: number }) {
+/** The official price struck through beside the JavaRouters price (The Struck Official Rule). */
+export function PriceCell(props: { official: number; sell: number }) {
   return (
-    <td className='px-4 py-3.5 text-right sm:px-6'>
+    <td className='px-3 py-3.5 text-right sm:px-6'>
       <div className='flex flex-col items-end gap-0.5 sm:flex-row sm:items-baseline sm:justify-end sm:gap-2.5'>
         <s className='text-muted-foreground text-xs tabular-nums decoration-[1.5px] sm:text-sm'>
           {formatPerMillion(props.official)}
@@ -65,8 +66,16 @@ function PriceCell(props: { official: number; sell: number }) {
   )
 }
 
-function RateRow(props: { row: RateBoardRow; index: number }) {
+export function SavingsChip(props: { percent: number }) {
   const { t } = useTranslation()
+  return (
+    <span className='bg-primary/10 text-primary rounded-md px-2 py-1 text-xs font-semibold whitespace-nowrap tabular-nums'>
+      {t('Save {{percent}}%', { percent: props.percent })}
+    </span>
+  )
+}
+
+function RateRow(props: { row: RateBoardRow; index: number }) {
   return (
     <tr
       className='jr-rate-row border-border/70 border-t'
@@ -87,9 +96,7 @@ function RateRow(props: { row: RateBoardRow; index: number }) {
         sell={props.row.outputPrice}
       />
       <td className='hidden px-6 py-3.5 text-right sm:table-cell'>
-        <span className='bg-primary/10 text-primary rounded-md px-2 py-1 text-xs font-semibold tabular-nums'>
-          {t('Save {{percent}}%', { percent: props.row.savingsPercent })}
-        </span>
+        <SavingsChip percent={props.row.savingsPercent} />
       </td>
     </tr>
   )
@@ -214,10 +221,10 @@ export function RateBoard(props: RateBoardProps) {
               <th scope='col' className='px-4 py-2.5 text-left font-medium sm:px-6'>
                 {t('Model')}
               </th>
-              <th scope='col' className='px-4 py-2.5 text-right font-medium sm:px-6'>
+              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
                 {t('Input')}
               </th>
-              <th scope='col' className='px-4 py-2.5 text-right font-medium sm:px-6'>
+              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
                 {t('Output')}
               </th>
               <th

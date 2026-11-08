@@ -7457,6 +7457,18 @@
     "Manual": "手動",
     "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "公開価格ページのルピア価格は表示用の概算です。残高と請求は USD のままです。",
     "IDR per USD": "1 USD あたりの IDR",
-    "e.g. 16500 means 1 USD = Rp 16,500": "例：16500 は 1 USD = Rp 16,500 を意味します"
+    "e.g. 16500 means 1 USD = Rp 16,500": "例：16500 は 1 USD = Rp 16,500 を意味します",
+    "By model family": "モデルファミリー順",
+    "Cheapest input first": "入力が安い順",
+    "Name (A-Z)": "名前（A-Z）",
+    "Sort models": "モデルの並べ替え",
+    "Search model or provider": "モデルまたはプロバイダーを検索",
+    "Cache read": "キャッシュ読み取り",
+    "Custom pricing, see details": "特別料金、詳細を表示",
+    "No models match \"{{query}}\".": "「{{query}}」に一致するモデルはありません。",
+    "Read the docs": "ドキュメントを読む",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "取り消し線の価格は各プロバイダーの公式価格です。モデルを選ぶとエンドポイントとコード例を表示します。",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "1 つの API キーで {{count}} の AI モデル。公式価格は取り消し線付きで当社価格の横に表示しています。",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "1 つの API キーですべての AI モデル。公式価格は取り消し線付きで当社価格の横に表示しています。"
   }
 }

@@ -77,6 +77,8 @@ export type RateBoardRow = {
   family: ModelFamily
   inputPrice: number
   outputPrice: number
+  /** Cache read sell price per 1M tokens; null when the model has none. */
+  cacheReadPrice: number | null
   officialInputPrice: number
   officialOutputPrice: number
   savingsPercent: number
@@ -91,10 +93,16 @@ export function getModelFamily(modelName: string): ModelFamily {
   return 'other'
 }
 
-/** Sell price in USD per 1M tokens, or null when it cannot be read as tokens. */
+function finiteOrNull(value: unknown): number | null {
+  if (value === undefined || value === null) return null
+  const number = Number(value)
+  return Number.isFinite(number) ? number : null
+}
+
+/** Sell prices in USD per 1M tokens, or null when they cannot be read as tokens. */
 export function getSellPrices(
   model: PricingModel
-): { input: number; output: number } | null {
+): { input: number; output: number; cacheRead: number | null } | null {
   if (model.billing_mode === 'tiered_expr') {
     const tier = getDynamicPricingTiers(model)[0]
     if (!tier || !('inputPrice' in tier) || tier.billingUnit === 'request') {
@@ -103,14 +111,18 @@ export function getSellPrices(
     const input = Number(tier.inputPrice)
     const output = Number(tier.outputPrice)
     return Number.isFinite(input) && Number.isFinite(output)
-      ? { input, output }
+      ? { input, output, cacheRead: finiteOrNull(tier.cacheReadPrice) }
       : null
   }
   if (model.quota_type !== 0) return null
   const input = calculateTokenPrice(model, 'input', 1)
   const output = calculateTokenPrice(model, 'output', 1)
   return Number.isFinite(input) && Number.isFinite(output)
-    ? { input, output }
+    ? {
+        input,
+        output,
+        cacheRead: finiteOrNull(calculateTokenPrice(model, 'cache', 1)),
+      }
     : null
 }
 
@@ -122,6 +134,7 @@ export function toRateBoardRow(model: PricingModel): RateBoardRow | null {
     family: getModelFamily(model.model_name),
     inputPrice: prices.input,
     outputPrice: prices.output,
+    cacheReadPrice: prices.cacheRead,
     officialInputPrice: prices.input / JAVAROUTERS_MARKUP,
     officialOutputPrice: prices.output / JAVAROUTERS_MARKUP,
     savingsPercent: Math.round((1 - JAVAROUTERS_MARKUP) * 100),

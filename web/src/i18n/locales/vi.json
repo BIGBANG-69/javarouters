@@ -7457,6 +7457,18 @@
     "Manual": "Thủ công",
     "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "Giá Rupiah trên trang giá công khai chỉ là ước tính để hiển thị; số dư và thanh toán vẫn tính bằng USD.",
     "IDR per USD": "IDR mỗi USD",
-    "e.g. 16500 means 1 USD = Rp 16,500": "ví dụ: 16500 nghĩa là 1 USD = Rp 16.500"
+    "e.g. 16500 means 1 USD = Rp 16,500": "ví dụ: 16500 nghĩa là 1 USD = Rp 16.500",
+    "By model family": "Theo dòng mô hình",
+    "Cheapest input first": "Đầu vào rẻ nhất trước",
+    "Name (A-Z)": "Tên (A-Z)",
+    "Sort models": "Sắp xếp mô hình",
+    "Search model or provider": "Tìm mô hình hoặc nhà cung cấp",
+    "Cache read": "Đọc bộ nhớ đệm",
+    "Custom pricing, see details": "Giá riêng, xem chi tiết",
+    "No models match \"{{query}}\".": "Không có mô hình nào khớp với \"{{query}}\".",
+    "Read the docs": "Đọc tài liệu",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "Giá bị gạch là giá chính thức của nhà cung cấp. Chọn một mô hình để xem endpoint và ví dụ mã.",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "{{count}} mô hình AI sau một API key. Giá chính thức được gạch bên cạnh giá của chúng tôi.",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "Mọi mô hình AI sau một API key. Giá chính thức được gạch bên cạnh giá của chúng tôi."
   }
 }

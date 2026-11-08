@@ -7457,6 +7457,18 @@
     "Manual": "Manuel",
     "Rupiah prices on the public price page are display estimates; balances and billing stay in USD.": "Les prix en roupies de la page publique des prix sont des estimations d’affichage ; le solde et la facturation restent en USD.",
     "IDR per USD": "IDR par USD",
-    "e.g. 16500 means 1 USD = Rp 16,500": "ex. 16500 signifie 1 USD = 16 500 Rp"
+    "e.g. 16500 means 1 USD = Rp 16,500": "ex. 16500 signifie 1 USD = 16 500 Rp",
+    "By model family": "Par famille de modèles",
+    "Cheapest input first": "Entrée la moins chère d’abord",
+    "Name (A-Z)": "Nom (A-Z)",
+    "Sort models": "Trier les modèles",
+    "Search model or provider": "Rechercher un modèle ou un fournisseur",
+    "Cache read": "Lecture du cache",
+    "Custom pricing, see details": "Tarif particulier, voir le détail",
+    "No models match \"{{query}}\".": "Aucun modèle ne correspond à « {{query}} ».",
+    "Read the docs": "Lire la documentation",
+    "Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.": "Les prix barrés sont les prix officiels des fournisseurs. Sélectionnez un modèle pour voir ses endpoints et des exemples de code.",
+    "{{count}} AI models behind one API key. Official prices are struck through beside ours.": "{{count}} modèles d’IA derrière une seule clé API. Les prix officiels sont barrés à côté des nôtres.",
+    "Every AI model behind one API key. Official prices are struck through beside ours.": "Tous les modèles d’IA derrière une seule clé API. Les prix officiels sont barrés à côté des nôtres."
   }
 }
