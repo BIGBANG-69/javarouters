@@ -37,6 +37,8 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/home_page_content", controller.GetHomePageContent)
 		// Aggregated platform usage for the public landing page (JavaRouters)
 		apiRouter.GET("/public/stats", controller.GetPublicStats)
+		// Ready-made OpenCode config listing every chat model (JavaRouters)
+		apiRouter.GET("/public/opencode.json", middleware.HeaderNavModuleAuth("pricing"), controller.GetOpenCodeConfig)
 		apiRouter.GET("/pricing", middleware.HeaderNavModuleAuth("pricing"), controller.GetPricing)
 		perfMetricsRoute := apiRouter.Group("/perf-metrics")
 		perfMetricsRoute.Use(middleware.HeaderNavModulePublicOrUserAuth("pricing"))
