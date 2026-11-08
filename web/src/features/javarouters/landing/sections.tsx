@@ -37,10 +37,11 @@ const STEPS = [
   },
 ] as const
 
+// Public copy never names server locations or infrastructure (see PRODUCT.md).
 const FACTS = [
   {
-    term: 'Servers in Singapore',
-    detail: 'Low latency from Indonesia and the rest of Southeast Asia.',
+    term: 'Every request on record',
+    detail: 'The console lists each request with its model, tokens and cost.',
   },
   {
     term: 'Prices that follow the market',

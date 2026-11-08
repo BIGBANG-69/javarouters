@@ -286,6 +286,14 @@ The full kurs board: every sold model in one table, built from the same Price Ce
 - **Currency:** Rupiah amounts are display estimates from the gateway's IDR rate; the footer strip states the rate, its source and date, and that balances and billing stay in USD. This is not a payment claim.
 - **Motion and states:** the rate-row settle, staggered for the first 12 rows only; skeleton rows while loading; error with "Coba lagi"; a no-match message with a "Hapus pencarian" button.
 
+### Usage Stats (landing)
+"Aktivitas platform, 7 hari terakhir": live platform usage aggregated across all users, from `/api/public/stats`. It sits between the hero section and the switch snippet, behind a top hairline.
+- **Visibility:** rendered only when the server publishes it, i.e. the last 7 days hold at least the admin's minimum number of completed requests (default 1,000; Data Dashboard settings). Hidden, loading and error states render nothing, so a thin week never shows.
+- **Figures:** a three-column definition list divided by hairlines (stacked below 640px): tokens processed (with the cache share), requests (with the success rate), and average response time. Labels in Label type; values in Schibsted Grotesk 600 at 1.875rem to 2.25rem with proportional figures, because a lone headline number reads tighter than tabular digits.
+- **Chart:** tokens per rolling day as seven emerald bars on paper, labelled by short weekday, with an equivalent screen-reader table. Empty days keep a 2% stub at 25% opacity.
+- **Most used models:** an ordered list of up to five, emerald rank number, monospace name, request count, and a 4px Mist track with an emerald fill proportional to the leader.
+- **Copy rule:** no server location, region, host or upstream source is ever named here.
+
 ### Savings Chip
 - **Style:** Emerald Wash ground, emerald 600-weight 0.75rem text, tabular numerals, 12.8px radius, 4px by 8px padding. Shows "Hemat 30%" computed from the live markup, never typed in.
 
@@ -334,7 +342,7 @@ Hairline top rule; brand lockup with the one-line tagline and optional admin foo
 - **Don't** introduce a second accent hue or use emerald decoratively.
 - **Don't** add shadows to cards, the rate board or the code panel; the scrolled header is the only shadow.
 - **Don't** hard-code model counts, prices or the savings percentage.
-- **Don't** add testimonial strips, customer logo walls or usage statistics; none exist to show.
+- **Don't** add testimonial strips or customer logo walls; none exist to show. Usage figures appear only through the Usage Stats section, from live records, and never name server locations or infrastructure.
 - **Don't** show Rupiah, QRIS or bank-transfer payment marks until such a payment method exists.
 - **Don't** remove, hide, dim or restyle away the New API / QuantumNous attribution.
 - **Don't** restyle the console from this system; it keeps the upstream layout and takes only the emerald tokens.

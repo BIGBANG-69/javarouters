@@ -23,7 +23,6 @@ JavaRouters is an AI API gateway: one account and one API key reach many AI mode
 
 - About 30% cheaper than the providers' official prices: input and output are sold at 70% of the official price, kept true automatically by the hourly price sync.
 - One API and one key for many model families, with OpenAI- and Anthropic-compatible endpoints, so existing SDKs and coding tools work by changing the base URL.
-- Servers in Southeast Asia (Singapore), close to Indonesian users.
 
 ## Operating Context
 
@@ -36,6 +35,7 @@ JavaRouters is an AI API gateway: one account and one API key reach many AI mode
 - Built on New API (QuantumNous/new-api, AGPLv3). The New API attribution text and link must stay visible in the UI, LICENSE/NOTICE stay intact, and the modified source must remain available (repo BIGBANG-69/javarouters is public). The project policy also forbids removing new-api / QuantumNous identifiers from code and metadata.
 - No Rupiah payment gateway is active yet; do not claim payment in Rupiah, QRIS or bank transfer until it exists.
 - Model counts and prices are dynamic; show live data rather than hard-coded numbers.
+- Never name server locations, hosting providers or other infrastructure details in public copy, docs or the usage statistics.
 - Web console UI keeps the upstream layout; the public pages are the JavaRouters-specific surface.
 
 ## Brand Commitments
@@ -48,7 +48,8 @@ JavaRouters is an AI API gateway: one account and one API key reach many AI mode
 ## Evidence on Hand
 
 - Live model catalog and per-model prices via `/api/pricing`.
-- No testimonials, customer logos, usage statistics, uptime figures or case studies exist; do not fabricate any.
+- Platform usage statistics (tokens processed, requests and success rate, average response time, most used models over the last 7 days) come live from the gateway's own usage records via `/api/public/stats`, aggregated across all users. They are shown only once the 7-day request count reaches an admin-set threshold, so the page never displays a thin week.
+- No testimonials, customer logos, uptime figures or case studies exist; do not fabricate any.
 - No JavaRouters logo yet (the default New API logo is in use until the user provides one).
 
 ## Product Principles

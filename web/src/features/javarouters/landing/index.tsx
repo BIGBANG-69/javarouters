@@ -34,6 +34,7 @@ import {
 import { RateBoard } from './rate-board'
 import { ClosingCta, Facts, GettingStarted } from './sections'
 import { SwitchSnippet } from './switch-snippet'
+import { UsageStatsSection } from './usage-stats'
 
 export function JavaRoutersLanding(props: { isAuthenticated: boolean }) {
   const { t } = useTranslation()
@@ -105,6 +106,7 @@ export function JavaRoutersLanding(props: { isAuthenticated: boolean }) {
           </div>
         </section>
 
+        <UsageStatsSection />
         <SwitchSnippet baseUrl={baseUrl} model={snippetModel} />
         <GettingStarted />
         <Facts />

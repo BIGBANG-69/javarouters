@@ -27,7 +27,7 @@ import { toRateBoardRow } from '../lib/rate-board'
 const VALUE_POINTS = [
   'About 30% under the official price, synced every hour',
   'OpenAI and Anthropic compatible endpoints',
-  'Servers in Singapore, close to Indonesia',
+  'One API key for Claude, GPT, Gemini and more',
 ] as const
 
 /** The emerald side of the auth pages: what the account gets you. */

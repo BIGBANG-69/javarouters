@@ -9,7 +9,7 @@ related_targets: ["web/src/components/layout/components/public-layout.tsx","web/
 
 Scope: landing page (`/`, default branch when no admin home content is set), the shared public header used by all public pages, the landing footer, and the auth layout (sign-in, sign-up, password reset). Console stays upstream. Visitor mode: Persuade.
 
-Audience and job: Indonesian developers, AI coding tool users, companies and resellers deciding whether to move their AI API spend. Action: create an account (`/sign-up`), secondary: read all prices (`/pricing`). Proof on hand: live model list and prices from `/api/pricing`, OpenAI/Anthropic-compatible endpoints, Singapore servers, hourly price sync. No testimonials, logos or statistics exist. Constraints: Indonesian by default; New API attribution stays visible; no Rupiah payment claim; support email to be supplied by the user.
+Audience and job: Indonesian developers, AI coding tool users, companies and resellers deciding whether to move their AI API spend. Action: create an account (`/sign-up`), secondary: read all prices (`/pricing`). Proof on hand: live model list and prices from `/api/pricing`, OpenAI/Anthropic-compatible endpoints, hourly price sync, and live platform usage statistics once the 7-day request threshold is met. No testimonials or logos exist. Never name server locations or infrastructure. Constraints: Indonesian by default; New API attribution stays visible; no Rupiah payment claim; support email to be supplied by the user.
 
 Memorable moment: the official price struck through beside the JavaRouters price, live, row after row, like a money changer's rate board.
 

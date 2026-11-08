@@ -56,7 +56,15 @@ const dataDashboardSchema = z.object({
   DataExportEnabled: z.boolean(),
   DataExportInterval: z.number().int().min(1).max(1440),
   DataExportDefaultTime: z.enum(['hour', 'day', 'week']),
+  PublicStatsEnabled: z.boolean(),
+  PublicStatsMinRequests: z.number().int().min(0),
 })
+
+// Form fields whose option key contains dots, which react-hook-form would read as nesting.
+const OPTION_KEYS: Partial<Record<keyof DataDashboardFormValues, string>> = {
+  PublicStatsEnabled: 'public_stats_setting.enabled',
+  PublicStatsMinRequests: 'public_stats_setting.min_requests',
+}
 
 type DataDashboardFormValues = z.infer<typeof dataDashboardSchema>
 
@@ -90,11 +98,15 @@ export function DashboardSection({ defaultValues }: DashboardSectionProps) {
     )
 
     for (const [key, value] of updates) {
-      await updateOption.mutateAsync({ key, value })
+      await updateOption.mutateAsync({
+        key: OPTION_KEYS[key as keyof DataDashboardFormValues] ?? key,
+        value,
+      })
     }
   }
 
   const isEnabled = form.watch('DataExportEnabled')
+  const isPublicStatsEnabled = form.watch('PublicStatsEnabled')
 
   return (
     <SettingsSection title={t('Data Dashboard')}>
@@ -154,12 +166,10 @@ export function DashboardSection({ defaultValues }: DashboardSectionProps) {
                 <FormItem>
                   <FormLabel>{t('Default time granularity')}</FormLabel>
                   <Select
-                    items={[
-                      ...granularityOptions.map((option) => ({
-                        value: option.value,
-                        label: t(option.label),
-                      })),
-                    ]}
+                    items={granularityOptions.map((option) => ({
+                      value: option.value,
+                      label: t(option.label),
+                    }))}
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={!isEnabled}
@@ -189,6 +199,54 @@ export function DashboardSection({ defaultValues }: DashboardSectionProps) {
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name='PublicStatsEnabled'
+            render={({ field }) => (
+              <SettingsSwitchItem>
+                <SettingsSwitchContent>
+                  <FormLabel>{t('Show usage statistics on the home page')}</FormLabel>
+                  <FormDescription>
+                    {t(
+                      'Tokens, requests, success rate, response time and top models of the last 7 days, aggregated across all users. Needs the data dashboard.'
+                    )}
+                  </FormDescription>
+                </SettingsSwitchContent>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </SettingsSwitchItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='PublicStatsMinRequests'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Minimum requests before showing')}</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    step={1}
+                    {...safeNumberFieldProps(field)}
+                    disabled={!isPublicStatsEnabled}
+                  />
+                </FormControl>
+                <FormDescription>
+                  {t(
+                    'The statistics stay hidden until the last 7 days hold at least this many completed requests.'
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </SettingsForm>
       </Form>
     </SettingsSection>

@@ -217,6 +217,8 @@ export type ContentSettings = {
   DataExportEnabled: boolean
   DataExportDefaultTime: string
   DataExportInterval: number
+  'public_stats_setting.enabled': boolean
+  'public_stats_setting.min_requests': number
   Chats: string
   DrawingEnabled: boolean
   MjNotifyEnabled: boolean

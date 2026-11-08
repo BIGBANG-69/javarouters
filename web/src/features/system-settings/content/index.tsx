@@ -36,6 +36,8 @@ const defaultContentSettings: ContentSettings = {
   DataExportEnabled: false,
   DataExportDefaultTime: 'hour',
   DataExportInterval: 5,
+  'public_stats_setting.enabled': true,
+  'public_stats_setting.min_requests': 1000,
   Chats: '[]',
   DrawingEnabled: false,
   MjNotifyEnabled: false,

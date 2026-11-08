@@ -49,6 +49,8 @@ const CONTENT_SECTIONS = [
           DataExportDefaultTime: validateDataExportDefaultTime(
             settings.DataExportDefaultTime
           ),
+          PublicStatsEnabled: settings['public_stats_setting.enabled'],
+          PublicStatsMinRequests: settings['public_stats_setting.min_requests'],
         }}
       />
     ),
