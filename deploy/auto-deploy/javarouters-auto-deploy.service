@@ -1,0 +1,13 @@
+[Unit]
+Description=Deploy the latest JavaRouters gateway image when CI publishes one
+Wants=network-online.target docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/opt/javarouters
+ExecStart=/bin/bash /opt/javarouters/auto-deploy.sh
+# Pull + recreate + health wait + possible rollback
+TimeoutStartSec=900
+NoNewPrivileges=true
