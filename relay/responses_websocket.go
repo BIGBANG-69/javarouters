@@ -207,7 +207,7 @@ func (s *responsesWSSession) runRequest(state *responsesWSCallState, message []b
 		if outgoing != nil {
 			if err := s.client.SetWriteDeadline(s.clientWriteBudget.Deadline(time.Now(), len(outgoing.body))); err != nil {
 				state.closeCode = websocket.CloseInternalServerErr
-			} else if err := s.client.WriteMessage(outgoing.kind, outgoing.body); err != nil {
+			} else if err := s.client.WriteMessage(outgoing.kind, service.PublicResponseModel(outgoing.body, s.lockedModel)); err != nil {
 				state.closeCode = websocket.CloseInternalServerErr
 			}
 		}
@@ -724,7 +724,7 @@ func (s *responsesWSSession) writeClient(kind int, message []byte) error {
 	if err := s.client.SetWriteDeadline(s.clientWriteBudget.Deadline(time.Now(), len(message))); err != nil {
 		return err
 	}
-	return s.client.WriteMessage(kind, message)
+	return s.client.WriteMessage(kind, service.PublicResponseModel(message, s.lockedModel))
 }
 
 func (s *responsesWSSession) sendError(eventID, streamID string, apiErr *types.NewAPIError) {
