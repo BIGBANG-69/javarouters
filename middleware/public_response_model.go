@@ -9,11 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PublicResponseModel makes relay responses report the model the client requested instead
+// PublicRelayResponse makes relay responses report the model the client requested instead
 // of the name the upstream returned, for plain and streamed HTTP responses alike. The
 // requested model is read when the response is written, so this can run before Distribute.
 // JavaRouters fork addition; the Responses WebSocket path applies the same rewrite itself.
-func PublicResponseModel() gin.HandlerFunc {
+func PublicRelayResponse() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer = &publicModelWriter{ResponseWriter: c.Writer, c: c}
 		c.Next()
@@ -51,7 +51,7 @@ func (w *publicModelWriter) WriteHeaderNow() {
 // count as a short write.
 func (w *publicModelWriter) Write(data []byte) (int, error) {
 	w.dropContentLength()
-	if _, err := w.ResponseWriter.Write(service.PublicResponseModel(data, w.model())); err != nil {
+	if _, err := w.ResponseWriter.Write(service.PublicRelayResponse(data, w.model())); err != nil {
 		return 0, err
 	}
 	return len(data), nil

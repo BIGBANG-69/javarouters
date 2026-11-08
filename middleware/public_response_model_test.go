@@ -14,8 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Customers must see the model they requested, never the upstream's own model or provider name.
-func TestPublicResponseModelRewritesUpstreamModelNames(t *testing.T) {
+// Customers see the model they requested, never the upstream model, provider name or price.
+func TestPublicRelayResponseHidesUpstreamDetails(t *testing.T) {
 	for _, tc := range []struct {
 		name  string
 		model string
@@ -71,28 +71,56 @@ func TestPublicResponseModelRewritesUpstreamModelNames(t *testing.T) {
 			want:  `{"model":null}`,
 		},
 		{
-			name: "no requested model leaves the body alone",
+			name: "no requested model leaves the model alone",
 			in:   `{"model":"vendor/x"}`,
 			want: `{"model":"vendor/x"}`,
 		},
+		{
+			name:  "upstream cost between usage members",
+			model: "m",
+			in:    `{"model":"vendor/x","usage":{"completion_tokens":16,"cost":0.00001,"prompt_tokens":86}}`,
+			want:  `{"model":"m","usage":{"completion_tokens":16,"prompt_tokens":86}}`,
+		},
+		{
+			name:  "upstream cost as last usage member",
+			model: "m",
+			in:    `{"usage":{"total_tokens":102, "cost" : 1.5e-05}}`,
+			want:  `{"usage":{"total_tokens":102}}`,
+		},
+		{
+			name: "upstream cost as only usage member, without a model",
+			in:   `data: {"usage":{"cost":0}}` + "\n\n",
+			want: `data: {"usage":{}}` + "\n\n",
+		},
+		{
+			name: "cost named inside message content stays",
+			in:   `{"content":"the \"cost\": 5 is high"}`,
+			want: `{"content":"the \"cost\": 5 is high"}`,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, string(service.PublicResponseModel([]byte(tc.in), tc.model)))
+			assert.Equal(t, tc.want, string(service.PublicRelayResponse([]byte(tc.in), tc.model)))
 		})
 	}
 }
 
-func TestPublicResponseModelMiddlewareRewritesWrittenResponses(t *testing.T) {
+func TestPublicRelayResponseMiddlewareRewritesWrittenResponses(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	upstreamBody := `{"id":"x","model":"vendor/deepseek-v4-pro-0813","choices":[]}`
 
 	router := gin.New()
-	router.Use(PublicResponseModel())
+	router.Use(PublicRelayResponse())
 	router.POST("/v1/chat/completions", func(c *gin.Context) {
 		c.Set(string(constant.ContextKeyOriginalModel), "deepseek-v4-pro")
 		upstream := &http.Response{
 			StatusCode: http.StatusOK,
-			Header:     http.Header{"Content-Type": []string{"application/json"}},
+			Header: http.Header{
+				"Content-Type":                  []string{"application/json"},
+				"Retry-After":                   []string{"3"},
+				"X-Inferhub-Model":              []string{"vendor/deepseek-v4-pro-0813"},
+				"X-Ratelimit-Remaining":         []string{"999"},
+				"Access-Control-Expose-Headers": []string{"X-Inferhub-Model"},
+			},
 		}
 		// The non-stream relay path sets Content-Length from the upstream body.
 		service.IOCopyBytesGracefully(c, upstream, []byte(upstreamBody))
@@ -114,6 +142,12 @@ func TestPublicResponseModelMiddlewareRewritesWrittenResponses(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, `{"id":"x","model":"deepseek-v4-pro","choices":[]}`, string(body))
 	assert.NotContains(t, string(body), "vendor")
+	// Only headers a client needs to read the body or back off pass through.
+	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
+	assert.Equal(t, "3", resp.Header.Get("Retry-After"))
+	for _, name := range []string{"X-Inferhub-Model", "X-Ratelimit-Remaining", "Access-Control-Expose-Headers"} {
+		assert.Empty(t, resp.Header.Get(name), name)
+	}
 
 	resp, err = http.Post(server.URL+"/v1/stream", "application/json", strings.NewReader("{}"))
 	require.NoError(t, err)
