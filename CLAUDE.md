@@ -14,3 +14,4 @@ Rules:
 - After reading, follow every rule in `AGENTS.md` for the rest of the work.
 - If the task touches `web/`, also Read `web/AGENTS.md` before editing frontend files.
 - If the task touches billing as defined under **Billing rules (mandatory read gate)** in `AGENTS.md`, also Read `.agents/rules/billing.md` in full before planning or editing. Tasks outside that definition may skip it.
+- If the task pulls, reviews or cherry-picks changes from upstream new-api, also Read `.agents/rules/upstream-sync.md` in full first. JavaRouters only relays customer -> JavaRouters -> InferHub, so upstream is never merged wholesale.
