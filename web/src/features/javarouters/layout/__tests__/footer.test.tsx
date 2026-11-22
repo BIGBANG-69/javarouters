@@ -84,10 +84,9 @@ describe('JavaRoutersFooter', () => {
   it('shows configured legal links and hides the docs link when none is set', () => {
     render(<JavaRoutersFooter />)
 
-    expect(screen.getByRole('link', { name: 'User Agreement' })).toHaveAttribute(
-      'href',
-      '/user-agreement'
-    )
+    expect(
+      screen.getByRole('link', { name: 'User Agreement' })
+    ).toHaveAttribute('href', '/user-agreement')
     expect(screen.queryByRole('link', { name: 'Docs' })).toBeNull()
   })
 })

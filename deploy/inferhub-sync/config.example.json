@@ -1,5 +1,5 @@
 {
-  "markup": 0.7,
+  "markup": 1.0,
   "cache_read_ratio": 0.1,
   "min_margin": 0.2,
   "max_removal_ratio": 0.2,

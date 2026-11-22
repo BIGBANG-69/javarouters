@@ -159,7 +159,6 @@ export type SiteSettings = {
 export type AuthSettings = {
   PasswordLoginEnabled: boolean
   PasswordRegisterEnabled: boolean
-  EmailVerificationEnabled: boolean
   RegisterEnabled: boolean
   EmailDomainRestrictionEnabled: boolean
   EmailAliasRestrictionEnabled: boolean
@@ -359,6 +358,8 @@ export type BillingSettings = {
   'checkin_setting.enabled': boolean
   'checkin_setting.min_quota': number
   'checkin_setting.max_quota': number
+  'usdc_solana_setting.enabled': boolean
+  'usdc_solana_setting.treasury_address': string
 }
 
 export type OperationsSettings = {

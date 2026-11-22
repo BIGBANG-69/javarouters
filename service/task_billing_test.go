@@ -60,6 +60,10 @@ func TestMain(m *testing.M) {
 		&model.UserSubscription{},
 		&model.SystemTask{},
 		&model.SystemTaskLock{},
+		&model.UsdcSolanaAddress{},
+		&model.UsdcSolanaDeposit{},
+		&model.DepositVoucher{},
+		&model.DepositVoucherUse{},
 	); err != nil {
 		panic("failed to migrate: " + err.Error())
 	}

@@ -21,10 +21,10 @@ import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { HeaderLogo } from '@/components/layout/components/header-logo'
 import type { PublicHeaderProps } from '@/components/layout/components/public-header'
 import type { TopNavLink } from '@/components/layout/types'
-import { LanguageSwitcher } from '@/components/language-switcher'
 import { NotificationPopover } from '@/components/notification-popover'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -103,8 +103,9 @@ export function JavaRoutersPublicHeader(props: PublicHeaderProps) {
   const canRegister =
     status?.register_enabled !== false && !status?.self_use_mode_enabled
   // Home and Console are reachable from the logo and the auth button.
-  const links = (dynamicLinks.length > 0 ? dynamicLinks : props.navLinks ?? [])
-    .filter((link) => link.href !== '/' && link.href !== '/dashboard')
+  const links = (
+    dynamicLinks.length > 0 ? dynamicLinks : (props.navLinks ?? [])
+  ).filter((link) => link.href !== '/' && link.href !== '/dashboard')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -120,9 +121,7 @@ export function JavaRoutersPublicHeader(props: PublicHeaderProps) {
   const navLinkClass = (active: boolean) =>
     cn(
       'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-      active
-        ? 'text-foreground'
-        : 'text-muted-foreground hover:text-foreground'
+      active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
     )
 
   let authArea = (
@@ -260,7 +259,10 @@ export function JavaRoutersPublicHeader(props: PublicHeaderProps) {
                 key={`${link.title}:${link.href}`}
                 link={link}
                 active={pathname === link.href}
-                className={cn(navLinkClass(pathname === link.href), 'px-0 py-3 text-base')}
+                className={cn(
+                  navLinkClass(pathname === link.href),
+                  'px-0 py-3 text-base'
+                )}
                 onNavigate={() => setMenuOpen(false)}
               />
             ))}

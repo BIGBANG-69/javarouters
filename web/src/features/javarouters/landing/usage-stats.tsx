@@ -57,7 +57,10 @@ function DailyTokens(props: { daily: PublicStats['daily']; locale?: string }) {
       <figcaption className='text-muted-foreground text-xs font-medium'>
         {t('Tokens per day')}
       </figcaption>
-      <div aria-hidden='true' className='mt-4 flex h-32 items-end gap-2 sm:gap-3'>
+      <div
+        aria-hidden='true'
+        className='mt-4 flex h-32 items-end gap-2 sm:gap-3'
+      >
         {props.daily.map((day) => (
           <div
             key={day.start}
@@ -122,8 +125,13 @@ export function UsageStats(props: { stats: PublicStats }) {
             })}
           </h2>
           <p className='text-muted-foreground flex items-center gap-2 text-xs'>
-            <span aria-hidden='true' className='bg-primary size-1.5 rounded-full' />
-            {t('Live from the gateway’s usage records · updated every 5 minutes')}
+            <span
+              aria-hidden='true'
+              className='bg-primary size-1.5 rounded-full'
+            />
+            {t(
+              'Live from the gateway’s usage records · updated every 5 minutes'
+            )}
           </p>
         </div>
 

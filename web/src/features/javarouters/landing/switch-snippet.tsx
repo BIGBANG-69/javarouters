@@ -94,7 +94,7 @@ export function SwitchSnippet(props: SwitchSnippetProps) {
                 <TabsTrigger
                   key={item}
                   value={item}
-                  className='h-8 flex-none px-0 text-[13px] group-data-[variant=line]/tabs-list:data-active:after:bg-primary'
+                  className='group-data-[variant=line]/tabs-list:data-active:after:bg-primary h-8 flex-none px-0 text-[13px]'
                 >
                   {LANGUAGE_LABELS[item]}
                 </TabsTrigger>
@@ -116,7 +116,10 @@ export function SwitchSnippet(props: SwitchSnippetProps) {
               <span
                 key={`${language}:${line.kind}:${line.text}`}
                 data-kind={line.kind}
-                className={cn('flex min-w-max px-3 sm:px-4', LINE_STYLES[line.kind])}
+                className={cn(
+                  'flex min-w-max px-3 sm:px-4',
+                  LINE_STYLES[line.kind]
+                )}
               >
                 <span
                   aria-hidden='true'
@@ -126,7 +129,9 @@ export function SwitchSnippet(props: SwitchSnippetProps) {
                 </span>
                 {line.kind !== 'context' && (
                   <span className='sr-only'>
-                    {line.kind === 'removed' ? t('Removed line:') : t('Added line:')}{' '}
+                    {line.kind === 'removed'
+                      ? t('Removed line:')
+                      : t('Added line:')}{' '}
                   </span>
                 )}
                 <span>{line.text || ' '}</span>

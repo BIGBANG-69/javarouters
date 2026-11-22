@@ -103,6 +103,11 @@ var accessTokenRouteRules = map[string]accessTokenRouteRule{
 	"POST /api/user/2fa/backup_codes":              accessTokenScopeRule("account_security:write"),
 	"GET /api/user/checkin":                        accessTokenScopeRule("wallet:read"),
 	"POST /api/user/checkin":                       accessTokenScopeRule("wallet:write"),
+	"GET /api/user/usdc-solana":                    accessTokenScopeRule("wallet:read"),
+	"POST /api/user/usdc-solana/address":           accessTokenScopeRule("wallet:write"),
+	"POST /api/user/usdc-solana/check":             accessTokenScopeRule("wallet:write"),
+	"POST /api/user/usdc-solana/voucher":           accessTokenScopeRule("wallet:write"),
+	"DELETE /api/user/usdc-solana/voucher":         accessTokenScopeRule("wallet:write"),
 	"GET /api/user/oauth/bindings":                 accessTokenScopeRule("account_security:read"),
 	"DELETE /api/user/oauth/bindings/:provider_id": accessTokenScopeRule("account_security:write"),
 
@@ -233,6 +238,13 @@ var accessTokenRouteRules = map[string]accessTokenRouteRule{
 	"PUT /api/redemption/":           accessTokenScopeRule("redemption:write"),
 	"DELETE /api/redemption/invalid": accessTokenScopeRule("redemption:write"),
 	"DELETE /api/redemption/:id":     accessTokenScopeRule("redemption:write"),
+
+	// router/api-router.go: /api/deposit-voucher and /api/usdc-solana (admin)
+	"GET /api/deposit-voucher/":       accessTokenScopeRule("billing:read"),
+	"POST /api/deposit-voucher/":      accessTokenScopeRule("billing:write"),
+	"PUT /api/deposit-voucher/":       accessTokenScopeRule("billing:write"),
+	"DELETE /api/deposit-voucher/:id": accessTokenScopeRule("billing:write"),
+	"GET /api/usdc-solana/stats":      accessTokenScopeRule("billing:read"),
 
 	// router/api-router.go: /api/audit, /api/log, /api/data
 	"GET /api/audit/self":                       accessTokenScopeRule("usage:read"),

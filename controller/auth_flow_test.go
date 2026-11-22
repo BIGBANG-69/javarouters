@@ -896,13 +896,12 @@ func TestOAuthLoginLegacyGitHubBindingRequiresAccountEvidence(t *testing.T) {
 		registerEnabled   bool
 		expectLogin       bool
 		expectMigration   bool
-		expectNewAccount  bool
 		expectEmailCalls  int
 		expectAuditParams string
 	}{
-		{name: "numeric legacy value registers a new account", existingGitHubID: "424242", legacyID: "424242", verifiedEmails: []string{"legacy-github@example.com"}, registerEnabled: true, expectLogin: true, expectNewAccount: true},
+		{name: "numeric legacy value never registers a new account", existingGitHubID: "424242", legacyID: "424242", verifiedEmails: []string{"legacy-github@example.com"}, registerEnabled: true},
 		{name: "numeric legacy value with registration disabled", existingGitHubID: "424242", legacyID: "424242", verifiedEmails: []string{"legacy-github@example.com"}},
-		{name: "soft-deleted legacy row registers a new account", existingGitHubID: "octocat-legacy", existingDeleted: true, legacyID: "octocat-legacy", verifiedEmails: []string{"legacy-github@example.com"}, registerEnabled: true, expectLogin: true, expectNewAccount: true},
+		{name: "soft-deleted legacy row never registers a new account", existingGitHubID: "octocat-legacy", existingDeleted: true, legacyID: "octocat-legacy", verifiedEmails: []string{"legacy-github@example.com"}, registerEnabled: true},
 		{
 			name: "verified email match migrates", existingGitHubID: "octocat-legacy", legacyID: "octocat-legacy",
 			verifiedEmails: []string{"other@example.com", " Legacy-GitHub@Example.com "}, expectLogin: true, expectMigration: true, expectEmailCalls: 1,
@@ -973,13 +972,10 @@ func TestOAuthLoginLegacyGitHubBindingRequiresAccountEvidence(t *testing.T) {
 				return
 			}
 			assert.Equal(t, test.existingGitHubID, reloaded.GitHubId, "the existing binding must stay untouched")
-			if test.expectNewAccount {
-				var created model.User
-				require.NoError(t, model.DB.Where("github_id = ?", "900001").First(&created).Error)
-				assert.NotEqual(t, existing.Id, created.Id)
-				assert.Equal(t, created.Id, result.Data.User.Id)
-				return
-			}
+			// New accounts are registered only with email and password.
+			var created int64
+			require.NoError(t, model.DB.Unscoped().Model(&model.User{}).Where("github_id = ?", "900001").Count(&created).Error)
+			assert.Zero(t, created)
 			assert.Empty(t, response.Header().Values("Set-Cookie"))
 			if test.expectAuditParams != "" {
 				assert.Equal(t, declined, result.Message)
@@ -1124,45 +1120,87 @@ func TestOAuthBindIgnoresLegacyGitHubUsernames(t *testing.T) {
 	}
 }
 
-func TestOAuthRegistrationPersistsInviter(t *testing.T) {
+func TestOAuthLoginNeverCreatesAccount(t *testing.T) {
 	db, dialect := openTaskDialectDatabase(t, &model.User{}, &model.Log{})
 	oldDB, oldLogDB := model.DB, model.LOG_DB
 	oldMain, oldLog := common.MainDatabaseType(), common.LogDatabaseType()
 	oldRedis, oldRegister := common.RedisEnabled, common.RegisterEnabled
-	oldNew, oldInvitee, oldInviter := common.QuotaForNewUser, common.QuotaForInvitee, common.QuotaForInviter
 	model.DB, model.LOG_DB = db, db
 	common.SetDatabaseTypes(dialect, dialect)
 	common.RedisEnabled, common.RegisterEnabled = false, true
-	common.QuotaForNewUser, common.QuotaForInvitee, common.QuotaForInviter = 0, 0, 0
 	t.Cleanup(func() {
 		model.DB, model.LOG_DB = oldDB, oldLogDB
 		common.SetDatabaseTypes(oldMain, oldLog)
 		common.RedisEnabled, common.RegisterEnabled = oldRedis, oldRegister
-		common.QuotaForNewUser, common.QuotaForInvitee, common.QuotaForInviter = oldNew, oldInvitee, oldInviter
 	})
-	inviter := model.User{Username: "inviter", AffCode: "valid-aff", Status: common.UserStatusEnabled}
-	require.NoError(t, db.Create(&inviter).Error)
-	for _, tc := range []struct {
-		name, code string
-		want       int
-	}{
-		{"valid", "valid-aff", inviter.Id}, {"missing", "", 0}, {"invalid", "unknown-aff", 0},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			ctx, _ := gin.CreateTestContext(httptest.NewRecorder())
-			provider := &oauth.GitHubProvider{}
-			identity := &oauth.OAuthUser{ProviderUserID: "inviter-test-" + tc.name, Username: "oauth-" + tc.name}
-			created, _, err := findOrCreateOAuthUser(ctx, provider, identity, &oauth.OAuthToken{}, tc.code)
-			require.NoError(t, err)
-			var stored model.User
-			require.NoError(t, db.First(&stored, created.Id).Error)
-			assert.Equal(t, tc.want, stored.InviterId)
-			assert.Equal(t, identity.ProviderUserID, stored.GitHubId)
-			existing, _, err := findOrCreateOAuthUser(ctx, provider, identity, &oauth.OAuthToken{}, "valid-aff")
-			require.NoError(t, err)
-			assert.Equal(t, created.Id, existing.Id)
-			require.NoError(t, db.First(&stored, created.Id).Error)
-			assert.Equal(t, tc.want, stored.InviterId, "login must not reassign the inviter")
-		})
+	linked := model.User{Username: "linked", GitHubId: "linked-github", Status: common.UserStatusEnabled}
+	require.NoError(t, db.Create(&linked).Error)
+	ctx, _ := gin.CreateTestContext(httptest.NewRecorder())
+	provider := &oauth.GitHubProvider{}
+
+	found, _, err := findOAuthUser(ctx, provider, &oauth.OAuthUser{ProviderUserID: "linked-github"}, &oauth.OAuthToken{})
+	require.NoError(t, err)
+	assert.Equal(t, linked.Id, found.Id)
+
+	_, _, err = findOAuthUser(ctx, provider, &oauth.OAuthUser{ProviderUserID: "new-github", Username: "newcomer", Email: "newcomer@example.com"}, &oauth.OAuthToken{})
+	var notLinked *OAuthAccountNotLinkedError
+	require.ErrorAs(t, err, &notLinked)
+	var count int64
+	require.NoError(t, db.Model(&model.User{}).Count(&count).Error)
+	assert.Equal(t, int64(1), count, "an unlinked provider identity must not create an account")
+}
+
+func TestRegisterRequiresVerifiedEmail(t *testing.T) {
+	db, dialect := openTaskDialectDatabase(t, &model.User{}, &model.Log{})
+	oldDB, oldLogDB := model.DB, model.LOG_DB
+	oldMain, oldLog := common.MainDatabaseType(), common.LogDatabaseType()
+	oldRedis := common.RedisEnabled
+	oldRegister, oldPasswordRegister := common.RegisterEnabled, common.PasswordRegisterEnabled
+	model.DB, model.LOG_DB = db, db
+	common.SetDatabaseTypes(dialect, dialect)
+	common.RedisEnabled = false
+	common.RegisterEnabled, common.PasswordRegisterEnabled = true, true
+	t.Cleanup(func() {
+		model.DB, model.LOG_DB = oldDB, oldLogDB
+		common.SetDatabaseTypes(oldMain, oldLog)
+		common.RedisEnabled = oldRedis
+		common.RegisterEnabled, common.PasswordRegisterEnabled = oldRegister, oldPasswordRegister
+		common.DeleteKey("new@example.com", common.EmailVerificationPurpose)
+	})
+	register := func(body string) (bool, string) {
+		recorder := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(recorder)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/user/register", strings.NewReader(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+		Register(c)
+		var result struct {
+			Success bool   `json:"success"`
+			Message string `json:"message"`
+		}
+		require.NoError(t, common.Unmarshal(recorder.Body.Bytes(), &result))
+		return result.Success, result.Message
 	}
+	common.RegisterVerificationCodeWithKey("new@example.com", "123456", common.EmailVerificationPurpose)
+
+	tests := []struct {
+		name, body string
+		success    bool
+	}{
+		{"without email", `{"username":"noemail","password":"Password-123"}`, false},
+		{"without code", `{"username":"nocode","password":"Password-123","email":"new@example.com"}`, false},
+		{"wrong code", `{"username":"wrongcode","password":"Password-123","email":"new@example.com","verification_code":"000000"}`, false},
+		{"verified email", `{"username":"verified","password":"Password-123","email":"New@Example.com","verification_code":"123456"}`, true},
+		{"code reused", `{"username":"reused","password":"Password-123","email":"new@example.com","verification_code":"123456"}`, false},
+	}
+	for _, test := range tests {
+		success, message := register(test.body)
+		assert.Equal(t, test.success, success, "%s: %s", test.name, message)
+	}
+
+	var users []model.User
+	require.NoError(t, db.Find(&users).Error)
+	require.Len(t, users, 1)
+	assert.Equal(t, "verified", users[0].Username)
+	assert.Equal(t, "new@example.com", users[0].Email)
+	assert.False(t, common.VerifyCodeWithKey("new@example.com", "123456", common.EmailVerificationPurpose), "a used registration code must not verify again")
 }

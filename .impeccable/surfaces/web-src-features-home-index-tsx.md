@@ -19,7 +19,7 @@ THESIS: The landing page is an AI rate board: live model prices set like a money
 
 OWN-WORLD: White ground, near-black ink, one emerald (#047857 light, #10b981 dark) used for the JavaRouters price column, primary actions and the closing field. Hairline 1px rules, tabular numerals, Schibsted Grotesk display, Public Sans body, small 8-12px radii, no gradients, glass, kickers or icon tiles.
 
-STORY: The visitor sees that one key reaches Claude, GPT, Gemini and more at about 30% under official prices, sees the proof in live rows, sees that switching is one changed line of code, then creates an account.
+STORY: The visitor sees that one key reaches Claude, GPT, Gemini and more at official prices with bonus credit on deposits, sees the prices in live rows, sees that switching is one changed line of code, then creates an account.
 
 FIRST VIEWPORT: Left-aligned headline across the content width at display scale, one supporting line, "Buat akun" primary and "Lihat semua harga" secondary in one row; directly beneath, still above the fold at 1440x900, the full-width rate board: family tabs, five model rows (model, input/1M, output/1M, savings), official prices struck through, JavaRouters prices in emerald tabular figures, a note that prices sync hourly.
 

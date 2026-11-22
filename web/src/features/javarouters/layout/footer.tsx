@@ -56,7 +56,7 @@ export function JavaRoutersFooter() {
             </span>
           </Link>
           <p className='text-muted-foreground mt-3 max-w-xs text-sm leading-relaxed'>
-            {t('One API for every AI model, priced under official.')}
+            {t('One API for every AI model, at official prices.')}
           </p>
           {footerHtml && (
             <div

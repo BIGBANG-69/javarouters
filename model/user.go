@@ -755,37 +755,6 @@ func (user *User) InsertWithTx(tx *gorm.DB, inviterId int) error {
 	})
 }
 
-// FinalizeOAuthUserCreation performs post-transaction tasks for OAuth user creation.
-// This should be called after the transaction commits successfully.
-func (user *User) FinalizeOAuthUserCreation(inviterId int) {
-	// 用户创建成功后，根据角色初始化边栏配置
-	var createdUser User
-	if err := DB.Where("id = ?", user.Id).First(&createdUser).Error; err == nil {
-		defaultSidebarConfig := generateDefaultSidebarConfigForRole(createdUser.Role)
-		if defaultSidebarConfig != "" {
-			currentSetting := createdUser.GetSetting()
-			currentSetting.SidebarModules = defaultSidebarConfig
-			createdUser.SetSetting(currentSetting)
-			createdUser.Update(false)
-			common.SysLog(common.LogText("initialized the sidebar config for new user %s (role: %d)", createdUser.Username, createdUser.Role))
-		}
-	}
-
-	if common.QuotaForNewUser > 0 {
-		RecordLog(user.Id, LogTypeSystem, common.NewMessage("New user sign-up bonus {{quota}}", map[string]any{"quota": logger.FormatQuota(common.QuotaForNewUser)}))
-	}
-	if inviterId != 0 && operation_setting.IsPaymentComplianceConfirmed() {
-		if common.QuotaForInvitee > 0 {
-			_ = IncreaseUserQuota(user.Id, common.QuotaForInvitee, true)
-			RecordLog(user.Id, LogTypeSystem, common.NewMessage("Invitation code bonus {{quota}}", map[string]any{"quota": logger.FormatQuota(common.QuotaForInvitee)}))
-		}
-		if common.QuotaForInviter > 0 {
-			RecordLog(inviterId, LogTypeSystem, common.NewMessage("Bonus for inviting a user {{quota}}", map[string]any{"quota": logger.FormatQuota(common.QuotaForInviter)}))
-			_ = inviteUser(inviterId)
-		}
-	}
-}
-
 func (user *User) Update(updatePassword bool) error {
 	var previousAuthVersion int64
 	if err := DB.Model(&User{}).Where("id = ?", user.Id).Select("auth_version").Find(&previousAuthVersion).Error; err != nil {

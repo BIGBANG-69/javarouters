@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
@@ -81,20 +80,9 @@ func WeChatAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if common.RegisterEnabled {
-			user.Username = "wechat_" + strconv.Itoa(model.GetMaxUserId()+1)
-			user.DisplayName = "WeChat User"
-			user.Role = common.RoleCommonUser
-			user.Status = common.UserStatusEnabled
-
-			if err := user.Insert(0); err != nil {
-				common.ApiError(c, err)
-				return
-			}
-		} else {
-			common.ApiErrorT(c, "New user registration has been disabled by administrator")
-			return
-		}
+		// New accounts are registered only with email and password.
+		common.ApiErrorT(c, "No account is linked to this sign-in method. Register with email and password, then link it in account settings")
+		return
 	}
 
 	if user.Status != common.UserStatusEnabled {

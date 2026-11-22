@@ -41,7 +41,6 @@ func InitOptionMap() {
 	common.OptionMap["ImageDownloadPermission"] = strconv.Itoa(common.ImageDownloadPermission)
 	common.OptionMap["PasswordLoginEnabled"] = strconv.FormatBool(common.PasswordLoginEnabled)
 	common.OptionMap["PasswordRegisterEnabled"] = strconv.FormatBool(common.PasswordRegisterEnabled)
-	common.OptionMap["EmailVerificationEnabled"] = strconv.FormatBool(common.EmailVerificationEnabled)
 	common.OptionMap["GitHubOAuthEnabled"] = strconv.FormatBool(common.GitHubOAuthEnabled)
 	common.OptionMap["LinuxDOOAuthEnabled"] = strconv.FormatBool(common.LinuxDOOAuthEnabled)
 	common.OptionMap["TelegramOAuthEnabled"] = strconv.FormatBool(common.TelegramOAuthEnabled)
@@ -238,6 +237,9 @@ func validateOptionValue(key string, value string) error {
 	if err := operation_setting.ValidateQuotaOption(key, value); err != nil {
 		return err
 	}
+	if err := operation_setting.ValidateUsdcSolanaOption(key, value); err != nil {
+		return err
+	}
 	if key == "EmailProvider" || key == "ResendApiKey" || key == "ResendFrom" {
 		if key == "EmailProvider" && value != "smtp" && value != "resend" {
 			return common.NewMessage("Email sending method must be SMTP or Resend")
@@ -407,8 +409,6 @@ func updateOptionMap(key string, value string) (err error) {
 			common.PasswordRegisterEnabled = boolValue
 		case "PasswordLoginEnabled":
 			common.PasswordLoginEnabled = boolValue
-		case "EmailVerificationEnabled":
-			common.EmailVerificationEnabled = boolValue
 		case "GitHubOAuthEnabled":
 			common.GitHubOAuthEnabled = boolValue
 		case "LinuxDOOAuthEnabled":

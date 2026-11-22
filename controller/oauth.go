@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 
@@ -283,7 +282,7 @@ func HandleOAuth(c *gin.Context) {
 
 	switch flow.Intent {
 	case model.AuthFlowIntentLogin:
-		handleOAuthLogin(c, provider, oauthUser, token, flow)
+		handleOAuthLogin(c, provider, oauthUser, token)
 	case model.AuthFlowIntentVerify:
 		handleOAuthVerification(c, providerName, oauthUser, flow)
 	}
@@ -305,26 +304,15 @@ func handleOAuthVerification(c *gin.Context, provider string, oauthUser *oauth.O
 	common.ApiSuccess(c, proof)
 }
 
-func handleOAuthLogin(c *gin.Context, provider oauth.Provider, oauthUser *oauth.OAuthUser, token *oauth.OAuthToken, flow *model.AuthFlow) {
-	// 7. Find or create user
-	var payload oauthFlowPayload
-	if err := common.UnmarshalJsonStr(flow.Payload, &payload); err != nil {
-		writeSecurityOperationError(c, err)
-		return
-	}
-	user, migration, err := findOrCreateOAuthUser(c, provider, oauthUser, token, payload.AffiliateCode)
+func handleOAuthLogin(c *gin.Context, provider oauth.Provider, oauthUser *oauth.OAuthUser, token *oauth.OAuthToken) {
+	// 7. Find the linked user
+	user, migration, err := findOAuthUser(c, provider, oauthUser, token)
 	if err != nil {
-		if errors.Is(err, model.ErrEmailAlreadyTaken) {
-			common.ApiErrorT(c, "Email address is already in use")
-			return
-		}
 		switch err.(type) {
 		case *OAuthUserDeletedError:
 			common.ApiErrorT(c, "User has been deleted")
-		case *OAuthRegistrationDisabledError:
-			common.ApiErrorT(c, "New user registration has been disabled by administrator")
-		case *OAuthEmailAlreadyTakenError:
-			common.ApiErrorT(c, "Email address is already in use")
+		case *OAuthAccountNotLinkedError:
+			common.ApiErrorT(c, "No account is linked to this sign-in method. Register with email and password, then link it in account settings")
 		case *OAuthLegacyBindingNotConfirmedError:
 			common.ApiErrorT(c, "This {{provider}} account cannot be linked to an existing account automatically, please sign in or register another way and then link {{provider}} in account settings", providerParams(provider.GetName()))
 		default:
@@ -393,10 +381,10 @@ func handleOAuthBind(c *gin.Context, providerName string, provider oauth.Provide
 	return true, notificationFailed
 }
 
-// findOrCreateOAuthUser finds the existing user or creates a new one. For a
-// legacy GitHub binding that still waits for the login verification, it also
-// returns the rewrite to carry into the challenge.
-func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *oauth.OAuthUser, token *oauth.OAuthToken, affiliateCode string) (*model.User, *service.LegacyGitHubMigration, error) {
+// findOAuthUser finds the account linked to the provider identity; it never
+// creates one. For a legacy GitHub binding that still waits for the login
+// verification, it also returns the rewrite to carry into the challenge.
+func findOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *oauth.OAuthUser, token *oauth.OAuthToken) (*model.User, *service.LegacyGitHubMigration, error) {
 	user := &model.User{}
 	if provider.ProviderUserIDColumn() == "telegram_id" {
 		err := provider.FillUserByProviderID(user, oauthUser.ProviderUserID)
@@ -475,108 +463,9 @@ func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *o
 		}
 	}
 
-	// User doesn't exist, create new user if registration is enabled
-	if !common.RegisterEnabled {
-		return nil, nil, &OAuthRegistrationDisabledError{}
-	}
-
-	// Set up new user
-	user.Username = provider.GetProviderPrefix() + strconv.Itoa(model.GetMaxUserId()+1)
-
-	if oauthUser.Username != "" {
-		if exists, err := model.CheckUserExistOrDeleted(oauthUser.Username, ""); err == nil && !exists {
-			// 防止索引退化
-			if len(oauthUser.Username) <= model.UserNameMaxLength {
-				user.Username = oauthUser.Username
-			}
-		}
-	}
-
-	if oauthUser.DisplayName != "" {
-		user.DisplayName = oauthUser.DisplayName
-	} else if oauthUser.Username != "" {
-		user.DisplayName = oauthUser.Username
-	} else {
-		user.DisplayName = provider.GetName() + " User"
-	}
-	if oauthUser.Email != "" {
-		user.Email = model.NormalizeEmail(oauthUser.Email)
-		if err := model.EnsureEmailAvailable(user.Email, 0); err != nil {
-			if errors.Is(err, model.ErrEmailAlreadyTaken) {
-				return nil, nil, &OAuthEmailAlreadyTakenError{}
-			}
-			return nil, nil, err
-		}
-	}
-	user.Role = common.RoleCommonUser
-	user.Status = common.UserStatusEnabled
-
-	// Handle affiliate code
-	inviterId := 0
-	if affiliateCode != "" {
-		inviterId, _ = model.GetUserIdByAffCode(affiliateCode)
-	}
-	user.InviterId = inviterId
-
-	// Use transaction to ensure user creation and OAuth binding are atomic
-	if genericProvider, ok := provider.(*oauth.GenericOAuthProvider); ok {
-		// Custom provider: create user and binding in a transaction
-		err := model.DB.Transaction(func(tx *gorm.DB) error {
-			// Create user
-			if err := user.InsertWithTx(tx, inviterId); err != nil {
-				return err
-			}
-
-			// Create OAuth binding
-			binding := &model.UserOAuthBinding{
-				UserId:         user.Id,
-				ProviderId:     genericProvider.GetProviderId(),
-				ProviderUserId: oauthUser.ProviderUserID,
-			}
-			if err := model.CreateUserOAuthBindingWithTx(tx, binding); err != nil {
-				return err
-			}
-
-			return nil
-		})
-		if err != nil {
-			return nil, nil, err
-		}
-
-		// Perform post-transaction tasks (logs, sidebar config, inviter rewards)
-		user.FinalizeOAuthUserCreation(inviterId)
-	} else {
-		// Built-in provider: create user and update provider ID in a transaction
-		err := model.DB.Transaction(func(tx *gorm.DB) error {
-			// Create user
-			if err := user.InsertWithTx(tx, inviterId); err != nil {
-				return err
-			}
-
-			// Set the provider user ID on the user model and update
-			provider.SetProviderUserID(user, oauthUser.ProviderUserID)
-			if err := tx.Model(user).Updates(map[string]any{
-				"github_id":   user.GitHubId,
-				"discord_id":  user.DiscordId,
-				"oidc_id":     user.OidcId,
-				"linux_do_id": user.LinuxDOId,
-				"wechat_id":   user.WeChatId,
-				"telegram_id": user.TelegramId,
-			}).Error; err != nil {
-				return err
-			}
-
-			return nil
-		})
-		if err != nil {
-			return nil, nil, err
-		}
-
-		// Perform post-transaction tasks
-		user.FinalizeOAuthUserCreation(inviterId)
-	}
-
-	return user, nil, nil
+	// New accounts are registered only with email and password. A provider
+	// identity can sign in once it is linked from the account settings.
+	return nil, nil, &OAuthAccountNotLinkedError{}
 }
 
 // recordLegacyGitHubBindingAudit records the outcome of a legacy GitHub binding
@@ -596,16 +485,12 @@ func (e *OAuthUserDeletedError) Error() string {
 	return "user has been deleted"
 }
 
-type OAuthRegistrationDisabledError struct{}
+// OAuthAccountNotLinkedError reports a provider identity that no account has
+// linked; signing in this way never creates an account.
+type OAuthAccountNotLinkedError struct{}
 
-func (e *OAuthRegistrationDisabledError) Error() string {
-	return "registration is disabled"
-}
-
-type OAuthEmailAlreadyTakenError struct{}
-
-func (e *OAuthEmailAlreadyTakenError) Error() string {
-	return "email is already in use"
+func (e *OAuthAccountNotLinkedError) Error() string {
+	return "provider identity is not linked to an account"
 }
 
 // OAuthLegacyBindingNotConfirmedError reports a legacy GitHub binding match that

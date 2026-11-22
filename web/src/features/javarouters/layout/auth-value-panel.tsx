@@ -25,7 +25,7 @@ import { usePricingData } from '@/features/pricing/hooks/use-pricing-data'
 import { toRateBoardRow } from '../lib/rate-board'
 
 const VALUE_POINTS = [
-  'About 30% under the official price, synced every hour',
+  'Official prices, plus bonus credit with deposit vouchers',
   'OpenAI and Anthropic compatible endpoints',
   'One API key for Claude, GPT, Gemini and more',
 ] as const
@@ -35,7 +35,8 @@ export function AuthValuePanel() {
   const { t } = useTranslation()
   const pricing = usePricingData()
   const modelCount = useMemo(
-    () => pricing.models.filter((model) => toRateBoardRow(model) !== null).length,
+    () =>
+      pricing.models.filter((model) => toRateBoardRow(model) !== null).length,
     [pricing.models]
   )
 

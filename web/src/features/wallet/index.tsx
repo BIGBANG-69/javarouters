@@ -31,6 +31,7 @@ import { PaymentConfirmDialog } from './components/dialogs/payment-confirm-dialo
 import { TransferDialog } from './components/dialogs/transfer-dialog'
 import { RechargeFormCard } from './components/recharge-form-card'
 import { SubscriptionPlansCard } from './components/subscription-plans-card'
+import { UsdcSolanaCard } from './components/usdc-solana-card'
 import { WalletStatsCard } from './components/wallet-stats-card'
 import { DEFAULT_DISCOUNT_RATE, PAYMENT_TYPES } from './constants'
 import {
@@ -297,7 +298,11 @@ export function Wallet(props: WalletProps) {
                   : 'grid gap-4'
               }
             >
-              <div id='wallet-add-funds' className='scroll-mt-4'>
+              <div
+                id='wallet-add-funds'
+                className='flex scroll-mt-4 flex-col gap-4 sm:gap-5'
+              >
+                <UsdcSolanaCard />
                 <RechargeFormCard
                   topupInfo={topupInfo}
                   presetAmounts={presetAmounts}

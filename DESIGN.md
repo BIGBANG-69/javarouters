@@ -1,6 +1,6 @@
 ---
 name: JavaRouters
-description: One API for every AI model, priced under official, set out like a money changer's rate board.
+description: One API for every AI model, at official prices, set out like a money changer's rate board.
 colors:
   emerald: "oklch(0.508 0.118 165.612)"
   emerald-bright: "oklch(0.696 0.17 162.48)"
@@ -202,7 +202,7 @@ One emerald on white, with neutral greys doing all structural work.
 ### Named Rules
 **The One Emerald Rule.** Emerald means "JavaRouters": our price, our action, our field. It never decorates; a second accent hue does not exist on the public surface.
 
-**The Struck Official Rule.** An official price appears only struck through (1.5px decoration) in Graphite, immediately beside its emerald sell price. The pair is the brand's proof and is never split across columns.
+**The Struck Official Rule.** An official price appears only struck through (1.5px decoration) in Graphite, immediately beside its emerald sell price. The pair is the brand's proof and is never split across columns. While JavaRouters sells at the official price (`JAVAROUTERS_MARKUP` is 1), the struck price and the Savings column are not shown; only the emerald price appears.
 
 ## Typography
 
@@ -295,7 +295,7 @@ The full kurs board: every sold model in one table, built from the same Price Ce
 - **Copy rule:** no server location, region, host or upstream source is ever named here.
 
 ### Savings Chip
-- **Style:** Emerald Wash ground, emerald 600-weight 0.75rem text, tabular numerals, 12.8px radius, 4px by 8px padding. Shows "Hemat 30%" computed from the live markup, never typed in.
+- **Style:** Emerald Wash ground, emerald 600-weight 0.75rem text, tabular numerals, 12.8px radius, 4px by 8px padding. Shows "Hemat 30%" computed from the live markup, never typed in. Hidden, with its column, while the markup is 1.
 
 ### Switch Snippet ("Ganti satu baris")
 A code diff that proves switching is one line.

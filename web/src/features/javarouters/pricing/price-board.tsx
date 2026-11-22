@@ -43,7 +43,11 @@ import {
   type PriceListRow,
   type PriceListSort,
 } from '../lib/price-list'
-import { formatPerMillion, MODEL_FAMILIES } from '../lib/rate-board'
+import {
+  formatPerMillion,
+  MODEL_FAMILIES,
+  SELLS_UNDER_OFFICIAL,
+} from '../lib/rate-board'
 
 const FAMILY_TABS: readonly PriceListFamily[] = ['all', ...MODEL_FAMILIES]
 
@@ -128,13 +132,15 @@ function PriceRow(props: {
               formatPerMillion(prices.cacheReadPrice)
             )}
           </td>
-          <td className='hidden px-6 py-3.5 text-right sm:table-cell'>
-            <SavingsChip percent={prices.savingsPercent} />
-          </td>
+          {SELLS_UNDER_OFFICIAL && (
+            <td className='hidden px-6 py-3.5 text-right sm:table-cell'>
+              <SavingsChip percent={prices.savingsPercent} />
+            </td>
+          )}
         </>
       ) : (
         <td
-          colSpan={4}
+          colSpan={SELLS_UNDER_OFFICIAL ? 4 : 3}
           className='text-muted-foreground px-4 py-3.5 text-right text-xs sm:px-6'
         >
           {t('Custom pricing, see details')}
@@ -148,7 +154,10 @@ function BoardMessage(props: { children: ReactNode }) {
   return (
     <tbody>
       <tr className='border-border/70 border-t'>
-        <td colSpan={5} className='px-4 py-12 text-center sm:px-6'>
+        <td
+          colSpan={SELLS_UNDER_OFFICIAL ? 5 : 4}
+          className='px-4 py-12 text-center sm:px-6'
+        >
           {props.children}
         </td>
       </tr>
@@ -195,9 +204,11 @@ export function PriceBoard(props: PriceBoardProps) {
             <td className='hidden px-6 py-4 md:table-cell'>
               <Skeleton className='ml-auto h-4 w-16' />
             </td>
-            <td className='hidden px-6 py-4 sm:table-cell'>
-              <Skeleton className='ml-auto h-5 w-16' />
-            </td>
+            {SELLS_UNDER_OFFICIAL && (
+              <td className='hidden px-6 py-4 sm:table-cell'>
+                <Skeleton className='ml-auto h-5 w-16' />
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -267,7 +278,7 @@ export function PriceBoard(props: PriceBoardProps) {
         <Tabs
           value={family}
           onValueChange={(value) => setFamily(value as PriceListFamily)}
-          className='-mx-4 min-w-0 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0'
+          className='-mx-4 min-w-0 [scrollbar-width:none] overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0'
         >
           <TabsList
             variant='line'
@@ -293,7 +304,10 @@ export function PriceBoard(props: PriceBoardProps) {
           </TabsList>
         </Tabs>
         <p className='text-muted-foreground flex items-center gap-2 text-xs'>
-          <span aria-hidden='true' className='bg-primary size-1.5 rounded-full' />
+          <span
+            aria-hidden='true'
+            className='bg-primary size-1.5 rounded-full'
+          />
           {t('Per 1M tokens · synced automatically every hour')}
         </p>
       </div>
@@ -348,13 +362,22 @@ export function PriceBoard(props: PriceBoardProps) {
         <table className='w-full min-w-[22rem] border-collapse text-sm'>
           <thead>
             <tr className='text-muted-foreground border-border/70 border-t text-xs'>
-              <th scope='col' className='px-3 py-2.5 text-left font-medium sm:px-6'>
+              <th
+                scope='col'
+                className='px-3 py-2.5 text-left font-medium sm:px-6'
+              >
                 {t('Model')}
               </th>
-              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
+              <th
+                scope='col'
+                className='px-3 py-2.5 text-right font-medium sm:px-6'
+              >
                 {t('Input')}
               </th>
-              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
+              <th
+                scope='col'
+                className='px-3 py-2.5 text-right font-medium sm:px-6'
+              >
                 {t('Output')}
               </th>
               <th
@@ -363,12 +386,14 @@ export function PriceBoard(props: PriceBoardProps) {
               >
                 {t('Cache read')}
               </th>
-              <th
-                scope='col'
-                className='hidden px-6 py-2.5 text-right font-medium sm:table-cell'
-              >
-                {t('Savings')}
-              </th>
+              {SELLS_UNDER_OFFICIAL && (
+                <th
+                  scope='col'
+                  className='hidden px-6 py-2.5 text-right font-medium sm:table-cell'
+                >
+                  {t('Savings')}
+                </th>
+              )}
             </tr>
           </thead>
           {body}
@@ -377,9 +402,13 @@ export function PriceBoard(props: PriceBoardProps) {
 
       <div className='border-border/70 bg-muted/30 flex flex-col gap-2 border-t px-4 py-3 text-xs sm:px-6'>
         <p className='text-muted-foreground'>
-          {t(
-            'Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.'
-          )}
+          {SELLS_UNDER_OFFICIAL
+            ? t(
+                'Struck-through prices are the providers’ official prices. Select a model for its endpoints and code examples.'
+              )
+            : t(
+                'Same prices as the providers’ official APIs; deposit vouchers add bonus credit. Select a model for its endpoints and code examples.'
+              )}
         </p>
         {props.footerNote}
       </div>

@@ -239,29 +239,24 @@ func Register(c *gin.Context) {
 		common.ApiErrorT(c, "Invalid input {{error}}", map[string]any{"error": err.Error()})
 		return
 	}
-	if common.EmailVerificationEnabled {
-		if user.Email == "" || user.VerificationCode == "" {
-			common.ApiErrorT(c, "Email verification is enabled, please enter email address and verification code")
-			return
-		}
-		if !common.VerifyCodeWithKey(user.Email, user.VerificationCode, common.EmailVerificationPurpose) {
-			common.ApiErrorT(c, "Verification code is incorrect or has expired")
-			return
-		}
-		if err := model.EnsureEmailAvailable(user.Email, 0); err != nil {
-			if errors.Is(err, model.ErrEmailAlreadyTaken) {
-				common.ApiErrorT(c, "Email address is already in use")
-				return
-			}
-			common.ApiErrorT(c, "Database error, please contact the administrator")
-			return
-		}
+	// Every new account is registered with a verified email address.
+	if user.Email == "" || user.VerificationCode == "" {
+		common.ApiErrorT(c, "Please enter email address and verification code")
+		return
 	}
-	emailForExistCheck := ""
-	if common.EmailVerificationEnabled {
-		emailForExistCheck = user.Email
+	if !common.VerifyCodeWithKey(user.Email, user.VerificationCode, common.EmailVerificationPurpose) {
+		common.ApiErrorT(c, "Verification code is incorrect or has expired")
+		return
 	}
-	exist, err := model.CheckUserExistOrDeleted(user.Username, emailForExistCheck)
+	if err := model.EnsureEmailAvailable(user.Email, 0); err != nil {
+		if errors.Is(err, model.ErrEmailAlreadyTaken) {
+			common.ApiErrorT(c, "Email address is already in use")
+			return
+		}
+		common.ApiErrorT(c, "Database error, please contact the administrator")
+		return
+	}
+	exist, err := model.CheckUserExistOrDeleted(user.Username, user.Email)
 	if err != nil {
 		common.ApiErrorT(c, "Database error, please contact the administrator")
 		common.SysLog(common.LogText("CheckUserExistOrDeleted error: %v", err))
@@ -278,10 +273,8 @@ func Register(c *gin.Context) {
 		Password:    user.Password,
 		DisplayName: user.Username,
 		InviterId:   inviterId,
+		Email:       user.Email,
 		Role:        common.RoleCommonUser, // 明确设置角色为普通用户
-	}
-	if common.EmailVerificationEnabled {
-		cleanUser.Email = user.Email
 	}
 	if err := cleanUser.Insert(inviterId); err != nil {
 		if errors.Is(err, model.ErrEmailAlreadyTaken) {
@@ -291,6 +284,7 @@ func Register(c *gin.Context) {
 		common.ApiError(c, err)
 		return
 	}
+	common.DeleteKey(user.Email, common.EmailVerificationPurpose)
 
 	// 获取插入后的用户ID
 	var insertedUser model.User

@@ -27,10 +27,7 @@ import { useStatus } from '@/hooks/use-status'
 
 import { JavaRoutersFooter } from '../layout/footer'
 import { toRateBoardRow, type RateBoardRow } from '../lib/rate-board'
-import {
-  DEFAULT_SNIPPET_MODEL,
-  resolveApiBaseUrl,
-} from '../lib/switch-snippet'
+import { DEFAULT_SNIPPET_MODEL, resolveApiBaseUrl } from '../lib/switch-snippet'
 import { RateBoard } from './rate-board'
 import { ClosingCta, Facts, GettingStarted } from './sections'
 import { SwitchSnippet } from './switch-snippet'
@@ -64,7 +61,7 @@ export function JavaRoutersLanding(props: { isAuthenticated: boolean }) {
           <h1 className='font-display text-[clamp(2.25rem,5.2vw,4.25rem)] leading-[1.04] font-semibold tracking-[-0.035em] text-balance'>
             <span className='block'>{t('One API for every AI model.')}</span>
             <span className='text-primary block'>
-              {t('Priced under official.')}
+              {t('Official prices, bonus credit.')}
             </span>
           </h1>
           <p className='text-muted-foreground mt-6 max-w-2xl text-lg leading-relaxed text-pretty'>

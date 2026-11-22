@@ -77,22 +77,26 @@ beforeEach(() =>
 afterEach(() => setBillingDisplayCurrency(null))
 
 describe('JavaRouters price board', () => {
-  it('lists every model with the official price struck through beside the sell price', () => {
+  it('lists every model at the official price, with nothing struck through', () => {
     renderBoard()
     expect(bodyRowNames()).toEqual(['claude-opus-4.8', 'gpt-5.4', 'kimi-k3'])
-    const row = screen.getByRole('button', { name: 'claude-opus-4.8' })
+    const row = screen
+      .getByRole('button', { name: 'claude-opus-4.8' })
       .closest('tr') as HTMLElement
-    expect(within(row).getByText('$5').tagName).toBe('S')
-    expect(within(row).getByText('$3.5')).toBeInTheDocument()
+    expect(within(row).getByText('$3.5').tagName).not.toBe('S')
     expect(within(row).getByText('$0.35')).toBeInTheDocument()
-    expect(within(row).getByText('Save 30%')).toBeInTheDocument()
+    expect(row.querySelector('s')).toBeNull()
+    expect(within(row).queryByText(/^Save /)).toBeNull()
+    expect(screen.queryByRole('columnheader', { name: 'Savings' })).toBeNull()
   })
 
   it('shows only one family after its tab is chosen, with per-family counts', async () => {
     const user = userEvent.setup()
     renderBoard()
     const tabs = screen.getByRole('tablist', { name: 'Model family' })
-    expect(within(tabs).getByRole('tab', { name: /All models\s*3/ })).toBeVisible()
+    expect(
+      within(tabs).getByRole('tab', { name: /All models\s*3/ })
+    ).toBeVisible()
     expect(within(tabs).queryByRole('tab', { name: /Gemini/ })).toBeNull()
 
     await user.click(within(tabs).getByRole('tab', { name: /GPT\s*1/ }))
@@ -153,7 +157,8 @@ describe('JavaRouters price board', () => {
       locale: 'id',
     })
     renderBoard()
-    const row = screen.getByRole('button', { name: 'claude-opus-4.8' })
+    const row = screen
+      .getByRole('button', { name: 'claude-opus-4.8' })
       .closest('tr') as HTMLElement
     expect(within(row).getByText(/^Rp\s63\.350$/)).toBeInTheDocument()
   })

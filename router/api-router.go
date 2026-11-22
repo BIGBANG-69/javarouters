@@ -126,6 +126,11 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.GET("/topup/info", controller.GetTopUpInfo)
 				selfRoute.GET("/topup/self", controller.GetUserTopUps)
 				selfRoute.POST("/topup", middleware.CriticalRateLimit(), controller.TopUp)
+				selfRoute.GET("/usdc-solana", middleware.DisableCache(), controller.GetUsdcSolanaDeposit)
+				selfRoute.POST("/usdc-solana/address", middleware.UserCriticalRateLimit("usdc-solana-address"), controller.CreateUsdcSolanaAddress)
+				selfRoute.POST("/usdc-solana/check", middleware.UserCriticalRateLimit("usdc-solana-check"), controller.CheckUsdcSolanaTransaction)
+				selfRoute.POST("/usdc-solana/voucher", middleware.UserCriticalRateLimit("deposit-voucher"), controller.ApplyUsdcSolanaVoucher)
+				selfRoute.DELETE("/usdc-solana/voucher", controller.RemoveUsdcSolanaVoucher)
 				selfRoute.POST("/pay", middleware.CriticalRateLimit(), controller.RequestEpay)
 				selfRoute.POST("/amount", controller.RequestAmount)
 				selfRoute.POST("/stripe/pay", middleware.CriticalRateLimit(), controller.RequestStripePay)
@@ -309,6 +314,16 @@ func SetApiRouter(router *gin.Engine) {
 				tokenUsageRoute.GET("/", controller.GetTokenUsage)
 			}
 		}
+
+		depositVoucherRoute := apiRouter.Group("/deposit-voucher")
+		depositVoucherRoute.Use(middleware.AdminAuth())
+		{
+			depositVoucherRoute.GET("/", controller.GetDepositVouchers)
+			depositVoucherRoute.POST("/", controller.CreateDepositVoucher)
+			depositVoucherRoute.PUT("/", controller.UpdateDepositVoucher)
+			depositVoucherRoute.DELETE("/:id", controller.DeleteDepositVoucher)
+		}
+		apiRouter.GET("/usdc-solana/stats", middleware.AdminAuth(), controller.GetUsdcSolanaStats)
 
 		redemptionRoute := apiRouter.Group("/redemption")
 		redemptionRoute.Use(middleware.AdminAuth())

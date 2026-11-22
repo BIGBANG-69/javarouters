@@ -287,3 +287,51 @@ export interface BillingHistoryResponse {
 export interface CompleteOrderRequest {
   trade_no: string
 }
+
+// ============================================================================
+// USDC (Solana) deposits
+// ============================================================================
+
+/** Amounts ending in _atomic are USDC base units: 1 USDC = 1,000,000. */
+export const USDC_ATOMIC_PER_USD = 1_000_000
+
+export interface UsdcSolanaVoucher {
+  code: string
+  name: string
+  bonus_percent: number
+  max_bonus_usd: number
+  min_deposit_usd: number
+  expires_at: number
+}
+
+export interface UsdcSolanaDeposit {
+  id: number
+  signature: string
+  amount_atomic: number
+  block_time: number
+  status: 'credited' | 'held'
+  voucher_code: string
+  bonus_atomic: number
+  created_at: number
+}
+
+export interface UsdcSolanaInfo {
+  available: boolean
+  mint: string
+  network: string
+  address?: string
+  token_account?: string
+  pay_url?: string
+  held_atomic?: number
+  voucher?: UsdcSolanaVoucher | null
+  deposits?: UsdcSolanaDeposit[]
+}
+
+export interface UsdcSolanaCheckResult {
+  outcome: 'credited' | 'duplicate' | 'held'
+  credited_atomic: number
+  bonus_atomic: number
+  voucher_code: string
+  quota: number
+  bonus_quota: number
+}

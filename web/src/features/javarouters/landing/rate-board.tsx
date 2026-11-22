@@ -31,6 +31,7 @@ import {
   buildRateBoard,
   formatPerMillion,
   RATE_BOARD_ROWS,
+  SELLS_UNDER_OFFICIAL,
   type ModelFamily,
   type RateBoardRow,
 } from '../lib/rate-board'
@@ -55,9 +56,11 @@ export function PriceCell(props: { official: number; sell: number }) {
   return (
     <td className='px-3 py-3.5 text-right sm:px-6'>
       <div className='flex flex-col items-end gap-0.5 sm:flex-row sm:items-baseline sm:justify-end sm:gap-2.5'>
-        <s className='text-muted-foreground text-xs tabular-nums decoration-[1.5px] sm:text-sm'>
-          {formatPerMillion(props.official)}
-        </s>
+        {SELLS_UNDER_OFFICIAL && (
+          <s className='text-muted-foreground text-xs tabular-nums decoration-[1.5px] sm:text-sm'>
+            {formatPerMillion(props.official)}
+          </s>
+        )}
         <span className='text-primary text-sm font-semibold tabular-nums sm:text-base'>
           {formatPerMillion(props.sell)}
         </span>
@@ -95,9 +98,11 @@ function RateRow(props: { row: RateBoardRow; index: number }) {
         official={props.row.officialOutputPrice}
         sell={props.row.outputPrice}
       />
-      <td className='hidden px-6 py-3.5 text-right sm:table-cell'>
-        <SavingsChip percent={props.row.savingsPercent} />
-      </td>
+      {SELLS_UNDER_OFFICIAL && (
+        <td className='hidden px-6 py-3.5 text-right sm:table-cell'>
+          <SavingsChip percent={props.row.savingsPercent} />
+        </td>
+      )}
     </tr>
   )
 }
@@ -119,9 +124,11 @@ function BoardBody(props: RateBoardProps & { rows: RateBoardRow[] }) {
             <td className='px-4 py-4 sm:px-6'>
               <Skeleton className='ml-auto h-4 w-24' />
             </td>
-            <td className='hidden px-6 py-4 sm:table-cell'>
-              <Skeleton className='ml-auto h-5 w-16' />
-            </td>
+            {SELLS_UNDER_OFFICIAL && (
+              <td className='hidden px-6 py-4 sm:table-cell'>
+                <Skeleton className='ml-auto h-5 w-16' />
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -132,7 +139,10 @@ function BoardBody(props: RateBoardProps & { rows: RateBoardRow[] }) {
     return (
       <tbody>
         <tr className='border-border/70 border-t'>
-          <td colSpan={4} className='px-4 py-10 text-center sm:px-6'>
+          <td
+            colSpan={SELLS_UNDER_OFFICIAL ? 4 : 3}
+            className='px-4 py-10 text-center sm:px-6'
+          >
             <p className='text-muted-foreground text-sm'>
               {props.hasError
                 ? t('Prices could not be loaded right now.')
@@ -170,7 +180,8 @@ export function RateBoard(props: RateBoardProps) {
     [props.models]
   )
   const [selected, setSelected] = useState<ModelFamily | null>(null)
-  const family = selected && families.includes(selected) ? selected : families[0]
+  const family =
+    selected && families.includes(selected) ? selected : families[0]
   const rows = useMemo(
     () => (family ? buildRateBoard(props.models, family) : []),
     [props.models, family]
@@ -200,7 +211,7 @@ export function RateBoard(props: RateBoardProps) {
                   key={item}
                   value={item}
                   disabled={families.length === 0}
-                  className='h-8 flex-none px-0 text-sm group-data-[variant=line]/tabs-list:data-active:after:bg-primary'
+                  className='group-data-[variant=line]/tabs-list:data-active:after:bg-primary h-8 flex-none px-0 text-sm'
                 >
                   {item === 'other' ? t('Other models') : FAMILY_LABELS[item]}
                 </TabsTrigger>
@@ -209,7 +220,10 @@ export function RateBoard(props: RateBoardProps) {
           </TabsList>
         </Tabs>
         <p className='text-muted-foreground flex items-center gap-2 text-xs'>
-          <span aria-hidden='true' className='bg-primary size-1.5 rounded-full' />
+          <span
+            aria-hidden='true'
+            className='bg-primary size-1.5 rounded-full'
+          />
           {t('Per 1M tokens · synced automatically every hour')}
         </p>
       </div>
@@ -218,21 +232,32 @@ export function RateBoard(props: RateBoardProps) {
         <table className='w-full min-w-[22rem] border-collapse text-sm'>
           <thead>
             <tr className='text-muted-foreground border-border/70 border-t text-xs'>
-              <th scope='col' className='px-4 py-2.5 text-left font-medium sm:px-6'>
+              <th
+                scope='col'
+                className='px-4 py-2.5 text-left font-medium sm:px-6'
+              >
                 {t('Model')}
-              </th>
-              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
-                {t('Input')}
-              </th>
-              <th scope='col' className='px-3 py-2.5 text-right font-medium sm:px-6'>
-                {t('Output')}
               </th>
               <th
                 scope='col'
-                className='hidden px-6 py-2.5 text-right font-medium sm:table-cell'
+                className='px-3 py-2.5 text-right font-medium sm:px-6'
               >
-                {t('Savings')}
+                {t('Input')}
               </th>
+              <th
+                scope='col'
+                className='px-3 py-2.5 text-right font-medium sm:px-6'
+              >
+                {t('Output')}
+              </th>
+              {SELLS_UNDER_OFFICIAL && (
+                <th
+                  scope='col'
+                  className='hidden px-6 py-2.5 text-right font-medium sm:table-cell'
+                >
+                  {t('Savings')}
+                </th>
+              )}
             </tr>
           </thead>
           <BoardBody {...props} rows={rows} key={family ?? 'none'} />
@@ -241,7 +266,11 @@ export function RateBoard(props: RateBoardProps) {
 
       <div className='border-border/70 bg-muted/30 flex flex-col gap-2 border-t px-4 py-3 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6'>
         <p className='text-muted-foreground'>
-          {t('Struck-through prices are the providers’ official prices.')}
+          {SELLS_UNDER_OFFICIAL
+            ? t('Struck-through prices are the providers’ official prices.')
+            : t(
+                'Same prices as the providers’ official APIs. Deposit vouchers add bonus credit.'
+              )}
         </p>
         <Link
           to='/pricing'

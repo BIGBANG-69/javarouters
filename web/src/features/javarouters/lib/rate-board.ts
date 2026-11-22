@@ -24,9 +24,13 @@ import { formatBillingCurrencyFromUSD } from '@/lib/currency'
 /**
  * Share of the official price JavaRouters charges for input and output tokens.
  * Must match `markup` in deploy/inferhub-sync/config.json, which keeps every
- * sold model at this share of its official price.
+ * sold model at this share of its official price. Change both together: the
+ * public boards derive the official price from the sell price with this value.
  */
-export const JAVAROUTERS_MARKUP = 0.7
+export const JAVAROUTERS_MARKUP = 1
+
+/** Whether the boards show the struck official price and a savings column. */
+export const SELLS_UNDER_OFFICIAL = JAVAROUTERS_MARKUP < 1
 
 export type ModelFamily = 'claude' | 'gpt' | 'gemini' | 'deepseek' | 'other'
 

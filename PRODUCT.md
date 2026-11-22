@@ -21,7 +21,7 @@ JavaRouters is an AI API gateway: one account and one API key reach many AI mode
 
 ## Positioning
 
-- About 30% cheaper than the providers' official prices: input and output are sold at 70% of the official price, kept true automatically by the hourly price sync.
+- The providers' official prices: input and output are sold at the official price (markup 1.0), kept true automatically by the hourly price sync. The saving is given as bonus credit instead: a deposit voucher adds a bonus percentage to the user's next USDC (Solana) deposit.
 - One API and one key for many model families, with OpenAI- and Anthropic-compatible endpoints, so existing SDKs and coding tools work by changing the base URL.
 
 ## Operating Context

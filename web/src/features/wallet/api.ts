@@ -39,6 +39,9 @@ import type {
   WaffoPaymentResponse,
   WaffoPancakePaymentRequest,
   WaffoPancakePaymentResponse,
+  UsdcSolanaInfo,
+  UsdcSolanaCheckResult,
+  UsdcSolanaVoucher,
 } from './types'
 
 // ============================================================================
@@ -244,5 +247,42 @@ export async function completeOrder(
   request: CompleteOrderRequest
 ): Promise<ApiResponse> {
   const res = await api.post('/api/user/topup/complete', request)
+  return res.data
+}
+
+// ============================================================================
+// USDC (Solana) deposits
+// ============================================================================
+
+export async function getUsdcSolanaInfo(): Promise<
+  ApiResponse<UsdcSolanaInfo>
+> {
+  const res = await api.get('/api/user/usdc-solana')
+  return res.data
+}
+
+export async function createUsdcSolanaAddress(): Promise<
+  ApiResponse<Pick<UsdcSolanaInfo, 'address' | 'token_account' | 'pay_url'>>
+> {
+  const res = await api.post('/api/user/usdc-solana/address')
+  return res.data
+}
+
+export async function checkUsdcSolanaTransaction(
+  signature: string
+): Promise<ApiResponse<UsdcSolanaCheckResult>> {
+  const res = await api.post('/api/user/usdc-solana/check', { signature })
+  return res.data
+}
+
+export async function applyUsdcSolanaVoucher(
+  code: string
+): Promise<ApiResponse<UsdcSolanaVoucher>> {
+  const res = await api.post('/api/user/usdc-solana/voucher', { code })
+  return res.data
+}
+
+export async function removeUsdcSolanaVoucher(): Promise<ApiResponse> {
+  const res = await api.delete('/api/user/usdc-solana/voucher')
   return res.data
 }

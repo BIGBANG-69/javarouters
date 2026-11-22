@@ -74,17 +74,16 @@ function modelRows() {
 }
 
 describe('RateBoard', () => {
-  it('shows the first family with the official price struck beside ours', () => {
+  it('shows the first family at the official price, nothing struck through', () => {
     renderBoard()
 
     const rows = modelRows()
-    expect(rows.map((row) => within(row).getByRole('rowheader').textContent)).toEqual([
-      'claude-opus-4.8',
-      'claude-haiku-4.5',
-    ])
+    expect(
+      rows.map((row) => within(row).getByRole('rowheader').textContent)
+    ).toEqual(['claude-opus-4.8', 'claude-haiku-4.5'])
     // The formatter follows the runtime locale, so accept either decimal mark.
     const [inputCell] = within(rows[0]).getAllByRole('cell')
-    expect(inputCell.querySelector('s')?.textContent).toMatch(/^\$5$/)
+    expect(inputCell.querySelector('s')).toBeNull()
     expect(inputCell.textContent).toMatch(/\$3[.,]5/)
   })
 
@@ -110,7 +109,9 @@ describe('RateBoard', () => {
     const user = userEvent.setup()
     const { onRetry } = renderBoard({ models: [], hasError: true })
 
-    expect(screen.getByText('Prices could not be loaded right now.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Prices could not be loaded right now.')
+    ).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Retry' }))
     expect(onRetry).toHaveBeenCalledTimes(1)
   })

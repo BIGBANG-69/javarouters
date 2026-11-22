@@ -25,6 +25,8 @@ import { PaymentSettingsSection } from '../integrations/payment-settings-section
 import { RatioSettingsCard } from '../models/ratio-settings-card'
 import type { BillingSettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
+import { DepositVouchersSection } from './usdc-solana/deposit-vouchers-section'
+import { UsdcSolanaSettingsSection } from './usdc-solana/usdc-solana-settings-section'
 
 const getModelDefaults = (settings: BillingSettings) => ({
   ModelPrice: settings.ModelPrice,
@@ -207,6 +209,24 @@ const BILLING_SECTIONS = [
         }}
       />
     ),
+  },
+  {
+    id: 'usdc-solana',
+    titleKey: 'USDC (Solana) Deposits',
+    build: (settings: BillingSettings) => (
+      <UsdcSolanaSettingsSection
+        defaultValues={{
+          enabled: settings['usdc_solana_setting.enabled'] ?? false,
+          treasuryAddress:
+            settings['usdc_solana_setting.treasury_address'] ?? '',
+        }}
+      />
+    ),
+  },
+  {
+    id: 'deposit-vouchers',
+    titleKey: 'Deposit Vouchers',
+    build: () => <DepositVouchersSection />,
   },
 ] as const
 

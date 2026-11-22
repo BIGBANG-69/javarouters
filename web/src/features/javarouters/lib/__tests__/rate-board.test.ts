@@ -20,16 +20,13 @@ import { describe, expect, it } from 'vitest'
 
 import type { PricingModel } from '@/features/pricing/types'
 
-import {
-  countByFamily,
-  filterPriceList,
-  toPriceListRow,
-} from '../price-list'
+import { countByFamily, filterPriceList, toPriceListRow } from '../price-list'
 import {
   availableFamilies,
   buildRateBoard,
   getModelFamily,
   JAVAROUTERS_MARKUP,
+  SELLS_UNDER_OFFICIAL,
   toRateBoardRow,
 } from '../rate-board'
 
@@ -73,10 +70,15 @@ describe('toRateBoardRow', () => {
     expect(row).toMatchObject({
       inputPrice: 3.5,
       outputPrice: 17.5,
-      savingsPercent: 30,
+      savingsPercent: Math.round((1 - JAVAROUTERS_MARKUP) * 100),
     })
     expect(row?.officialInputPrice).toBeCloseTo(3.5 / JAVAROUTERS_MARKUP)
-    expect(row?.officialOutputPrice).toBeCloseTo(25)
+    expect(row?.officialOutputPrice).toBeCloseTo(17.5 / JAVAROUTERS_MARKUP)
+  })
+
+  it('sells at the official price, so nothing is struck through', () => {
+    expect(JAVAROUTERS_MARKUP).toBe(1)
+    expect(SELLS_UNDER_OFFICIAL).toBe(false)
   })
 
   it('reads legacy ratio pricing as USD per million tokens', () => {
@@ -116,7 +118,10 @@ describe('toRateBoardRow', () => {
   })
 
   it('skips models priced per request', () => {
-    const perRequest = exprModel('deepseek-search', 'tier("request", fixed(0.00075))')
+    const perRequest = exprModel(
+      'deepseek-search',
+      'tier("request", fixed(0.00075))'
+    )
     const legacyPerCall = {
       ...tokenModel('grok-imagine', 1, 1),
       billing_mode: undefined,
@@ -216,7 +221,11 @@ describe('price list', () => {
       )
     ).toEqual(['claude-opus-4.8'])
     expect(
-      filterPriceList(rows, { family: 'all', query: 'opus openai', sort: 'name' })
+      filterPriceList(rows, {
+        family: 'all',
+        query: 'opus openai',
+        sort: 'name',
+      })
     ).toEqual([])
   })
 })

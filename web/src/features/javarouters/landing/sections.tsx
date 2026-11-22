@@ -44,9 +44,9 @@ const FACTS = [
     detail: 'The console lists each request with its model, tokens and cost.',
   },
   {
-    term: 'Prices that follow the market',
+    term: 'Official prices, bonus credit',
     detail:
-      'Prices sync automatically every hour and stay about 30% under the official price.',
+      'Prices match the official APIs and sync every hour. A deposit voucher adds bonus credit to your USDC deposit.',
   },
   {
     term: 'OpenAI and Anthropic compatible',
