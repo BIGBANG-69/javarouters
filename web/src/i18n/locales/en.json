@@ -1986,6 +1986,7 @@
     "Deployments": "Deployments",
     "Deposit addresses": "Deposit addresses",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "Deposit received but your balance is at its limit. It will be credited with your next deposit.",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.",
     "Deposit USDC (Solana)": "Deposit USDC (Solana)",
     "Deposit Vouchers": "Deposit Vouchers",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.",

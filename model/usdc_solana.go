@@ -237,6 +237,7 @@ const (
 
 type UsdcSolanaCreditResult struct {
 	Outcome        UsdcSolanaCreditOutcome `json:"outcome"`
+	HoldReason     string                  `json:"hold_reason,omitempty"`
 	CreditedAtomic int64                   `json:"credited_atomic"`
 	BonusAtomic    int64                   `json:"bonus_atomic"`
 	VoucherCode    string                  `json:"voucher_code,omitempty"`
@@ -332,6 +333,14 @@ func CreditUsdcSolanaDeposit(userId int, deposit UsdcSolanaDeposit, callerIp str
 			errors.As(err, &quotaClamp):
 			common.SysError(common.LogText("usdc solana deposit for user %d held: %v", userId, err))
 			result.Outcome = UsdcSolanaOutcomeHeld
+			switch {
+			case errors.Is(err, ErrInvalidTopUpQuota):
+				result.HoldReason = "below_minimum_unit"
+			case errors.Is(err, gorm.ErrRecordNotFound):
+				result.HoldReason = "user_unavailable"
+			default:
+				result.HoldReason = "balance_limit"
+			}
 			addressUpdates["held_atomic"] = paidAtomic
 			return tx.Model(&UsdcSolanaAddress{}).Where("id = ?", address.Id).Updates(addressUpdates).Error
 		default:

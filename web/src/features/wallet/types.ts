@@ -329,6 +329,7 @@ export interface UsdcSolanaInfo {
 
 export interface UsdcSolanaCheckResult {
   outcome: 'credited' | 'duplicate' | 'held'
+  hold_reason?: 'balance_limit' | 'below_minimum_unit' | 'user_unavailable'
   credited_atomic: number
   bonus_atomic: number
   voucher_code: string

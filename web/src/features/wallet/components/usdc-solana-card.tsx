@@ -26,7 +26,7 @@ import {
   X,
 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -177,11 +177,19 @@ function DepositRow(props: { deposit: UsdcSolanaDeposit }) {
 
 export function UsdcSolanaCard(props: {
   onDepositSuccess?: () => void | Promise<void>
+  onAvailabilityChange?: (available: boolean) => void
 }) {
   const { t, i18n } = useTranslation()
   const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
   const queryClient = useQueryClient()
   const { data: info, isLoading } = useUsdcSolanaInfo()
+  const onAvailabilityChange = props.onAvailabilityChange
+
+  useEffect(() => {
+    if (!isLoading) {
+      onAvailabilityChange?.(Boolean(info?.available))
+    }
+  }, [info?.available, isLoading, onAvailabilityChange])
 
   const [creating, setCreating] = useState(false)
   const [voucherCode, setVoucherCode] = useState('')
@@ -265,9 +273,13 @@ export function UsdcSolanaCard(props: {
         toast.info(t('This transaction was already credited'))
       } else if (result.outcome === 'held') {
         toast.warning(
-          t(
-            'Deposit received but your balance is at its limit. It will be credited with your next deposit.'
-          )
+          result.hold_reason === 'below_minimum_unit'
+            ? t(
+                'Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.'
+              )
+            : t(
+                'Deposit received but your balance is at its limit. It will be credited with your next deposit.'
+              )
         )
       } else {
         toast.success(

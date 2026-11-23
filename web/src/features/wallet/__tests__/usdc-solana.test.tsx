@@ -24,6 +24,7 @@ import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
 import { BillingHistoryDialog } from '@/features/wallet/components/dialogs/billing-history-dialog'
+import { RechargeFormCard } from '@/features/wallet/components/recharge-form-card'
 import { UsdcSolanaCard } from '@/features/wallet/components/usdc-solana-card'
 import en from '@/i18n/locales/en.json'
 import { api } from '@/lib/api'
@@ -130,4 +131,42 @@ it('renders USDC (Solana) payment method name and fractional USD amount in billi
   expect(screen.getByText('USDC (Solana)')).toBeVisible()
   // The currency formatter follows the runtime locale (e.g. "$0.75" or "US$0,75").
   expect(screen.getByText(/\$0[.,]75/)).toBeVisible()
+})
+
+it('hides the disabled online topup alert when an alternative topup like USDC is active', () => {
+  render(
+    <I18nextProvider i18n={i18n}>
+      <RechargeFormCard
+        hasAlternativeTopup
+        topupInfo={{
+          enable_online_topup: false,
+          enable_stripe_topup: false,
+          pay_methods: [],
+          min_topup: 1,
+          stripe_min_topup: 1,
+          amount_options: [],
+          discount: {},
+        }}
+        presetAmounts={[]}
+        selectedPreset={null}
+        topupAmount={0}
+        paymentAmount={0}
+        calculating={false}
+        paymentLoading={null}
+        redemptionCode=''
+        redeeming={false}
+        onSelectPreset={vi.fn()}
+        onTopupAmountChange={vi.fn()}
+        onPaymentMethodSelect={vi.fn()}
+        onRedemptionCodeChange={vi.fn()}
+        onRedeem={vi.fn()}
+      />
+    </I18nextProvider>
+  )
+
+  expect(
+    screen.queryByText(
+      'Online topup is not enabled. Please use redemption code or contact administrator.'
+    )
+  ).toBeNull()
 })

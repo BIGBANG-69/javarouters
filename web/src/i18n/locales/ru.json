@@ -1986,6 +1986,7 @@
     "Deployments": "Развертывания",
     "Deposit addresses": "Адреса депозитов",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "Депозит получен, но ваш баланс достиг лимита. Средства зачислятся при следующем пополнении.",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "Депозит получен, но сумма слишком мала для отдельного зачисления. Она будет зачислена при следующем депозите.",
     "Deposit USDC (Solana)": "Пополнение USDC (Solana)",
     "Deposit Vouchers": "Ваучеры на депозит",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "Депозиты автоматически переводятся с адресов пользователей на этот кошелёк. Используйте контролируемый вами кошелёк (например, аппаратный), а не адрес биржи.",

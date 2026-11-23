@@ -1986,6 +1986,7 @@
     "Deployments": "デプロイ",
     "Deposit addresses": "入金アドレス数",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "入金を受け付けましたが残高上限に達しているため保留中です。次回入金時に合算反映されます。",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "入金を受け付けましたが、金額が小さすぎるため単体では反映できません。次回入金時に合算して反映されます。",
     "Deposit USDC (Solana)": "USDC (Solana) 入金",
     "Deposit Vouchers": "入金バウチャー",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "ユーザーアドレスへの入金はこのウォレットへ自動回収されます。取引所の入金アドレスではなく、ハードウェアウォレット等ご自身で管理するウォレットを指定してください。",

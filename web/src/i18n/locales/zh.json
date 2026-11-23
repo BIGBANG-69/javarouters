@@ -1986,6 +1986,7 @@
     "Deployments": "部署",
     "Deposit addresses": "充值地址数",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "充值已收到，但您的余额已达上限，将在下次充值时一并入账。",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "充值已收到，但单笔金额过小暂无法入账，将在您下次充值时合并入账。",
     "Deposit USDC (Solana)": "充值 USDC (Solana)",
     "Deposit Vouchers": "充值代金券",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "用户地址收到的资金会自动归集到此钱包。请使用您自行掌控的钱包（如硬件钱包），切勿填写交易所充值地址。",

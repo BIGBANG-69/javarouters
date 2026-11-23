@@ -81,6 +81,8 @@ interface RechargeFormCardProps {
   waffoMinTopup?: number
   onWaffoMethodSelect?: (method: WaffoPayMethod, index: number) => void
   enableWaffoPancakeTopup?: boolean
+  /** Another top-up card (e.g. USDC Solana) is active above this card. */
+  hasAlternativeTopup?: boolean
 }
 
 export function RechargeFormCard({
@@ -111,6 +113,7 @@ export function RechargeFormCard({
   waffoMinTopup,
   onWaffoMethodSelect,
   enableWaffoPancakeTopup,
+  hasAlternativeTopup,
 }: RechargeFormCardProps) {
   const { t } = useTranslation()
   const [localAmount, setLocalAmount] = useState(topupAmount.toString())
@@ -217,7 +220,7 @@ export function RechargeFormCard({
       contentClassName='space-y-4 sm:space-y-6'
     >
       {/* Online Topup Section */}
-      {hasAnyTopup ? (
+      {hasAnyTopup && (
         <div className='space-y-4 sm:space-y-6'>
           {hasConfigurableTopup && (
             <>
@@ -487,7 +490,8 @@ export function RechargeFormCard({
             </>
           )}
         </div>
-      ) : (
+      )}
+      {!hasAnyTopup && !hasAlternativeTopup && (
         <Alert>
           <AlertDescription>
             {t(

@@ -1986,6 +1986,7 @@
     "Deployments": "Déploiements",
     "Deposit addresses": "Adresses de dépôt",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "Dépôt reçu mais votre solde atteint sa limite. Il sera crédité lors de votre prochain dépôt.",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "Dépôt reçu, mais le montant est trop faible pour être crédité seul. Il sera crédité lors de votre prochain dépôt.",
     "Deposit USDC (Solana)": "Déposer des USDC (Solana)",
     "Deposit Vouchers": "Bons de dépôt",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "Les dépôts sont transférés des adresses utilisateurs vers ce portefeuille. Utilisez un portefeuille que vous contrôlez (ex. matériel), pas une adresse d’exchange.",

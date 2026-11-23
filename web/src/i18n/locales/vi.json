@@ -1986,6 +1986,7 @@
     "Deployments": "Triển khai",
     "Deposit addresses": "Địa chỉ nạp",
     "Deposit received but your balance is at its limit. It will be credited with your next deposit.": "Đã nhận tiền nạp nhưng số dư của bạn đã đạt giới hạn. Khoản này sẽ được ghi có cùng lần nạp tiếp theo.",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "Đã nhận tiền nạp, nhưng số tiền quá nhỏ để ghi có riêng lẻ. Khoản này sẽ được ghi có cùng lần nạp tiếp theo.",
     "Deposit USDC (Solana)": "Nạp USDC (Solana)",
     "Deposit Vouchers": "Voucher nạp tiền",
     "Deposits are swept from user addresses to this wallet. Use a wallet you control, such as a hardware wallet, not an exchange deposit address.": "Tiền nạp được gom từ địa chỉ người dùng về ví này. Hãy dùng ví bạn tự kiểm soát (như ví lạnh), không dùng địa chỉ nạp của sàn.",
