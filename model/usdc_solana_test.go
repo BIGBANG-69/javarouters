@@ -185,3 +185,82 @@ func TestCreditUsdcSolanaDepositHoldsAboveWalletLimit(t *testing.T) {
 	assert.Equal(t, 2*UsdcSolanaAtomicPerUSD, result.CreditedAtomic)
 	assert.Equal(t, 1000000, usdcTestQuota(t, 531))
 }
+
+func TestCreditUsdcSolanaDepositHoldsSoftDeletedUserAndProtectsSweepRace(t *testing.T) {
+	truncateTables(t)
+	seedUsdcSolanaUser(t, 541)
+	require.NoError(t, DB.Delete(&User{}, 541).Error)
+
+	// A deposit to a soft-deleted user is recorded as held and marked for sweep
+	// without returning an error that would wedge the watcher scan queue.
+	result, err := CreditUsdcSolanaDeposit(541, usdcDeposit("sig-deleted", 5), "")
+	require.NoError(t, err)
+	assert.Equal(t, UsdcSolanaOutcomeHeld, result.Outcome)
+	address, err := GetUsdcSolanaAddressByUserId(541)
+	require.NoError(t, err)
+	assert.True(t, address.NeedsSweep)
+	assert.Equal(t, 5*UsdcSolanaAtomicPerUSD, address.HeldAtomic)
+
+	// ClearUsdcSolanaNeedsSweepIfNoNewDeposit preserves needs_sweep when a
+	// deposit arrived concurrently after the balance snapshot.
+	seedUsdcSolanaUser(t, 542)
+	_, err = CreditUsdcSolanaDeposit(542, usdcDeposit("sig-first", 2), "")
+	require.NoError(t, err)
+	snapshotId, err := GetLatestUsdcSolanaDepositId(542)
+	require.NoError(t, err)
+	require.NoError(t, DB.Model(&UsdcSolanaAddress{}).Where("user_id = ?", 542).
+		Updates(map[string]any{"sweep_signature": "old-sweep", "sweep_sent_at": 12345}).Error)
+
+	_, err = CreditUsdcSolanaDeposit(542, usdcDeposit("sig-concurrent", 3), "")
+	require.NoError(t, err)
+	addr542, err := GetUsdcSolanaAddressByUserId(542)
+	require.NoError(t, err)
+	require.NoError(t, ClearUsdcSolanaNeedsSweepIfNoNewDeposit(addr542.Id, 542, snapshotId))
+	addr542, err = GetUsdcSolanaAddressByUserId(542)
+	require.NoError(t, err)
+	assert.True(t, addr542.NeedsSweep, "concurrent deposit must keep needs_sweep set")
+
+	// Once the latest deposit is included in the snapshot, needs_sweep and
+	// prior sweep metadata are cleared together.
+	latestId, err := GetLatestUsdcSolanaDepositId(542)
+	require.NoError(t, err)
+	require.NoError(t, ClearUsdcSolanaNeedsSweepIfNoNewDeposit(addr542.Id, 542, latestId))
+	addr542, err = GetUsdcSolanaAddressByUserId(542)
+	require.NoError(t, err)
+	assert.False(t, addr542.NeedsSweep)
+	assert.Empty(t, addr542.SweepSignature)
+	assert.Zero(t, addr542.SweepSentAt)
+}
+
+func TestDepositVoucherReapplyAndUsabilityChecks(t *testing.T) {
+	truncateTables(t)
+	seedUsdcSolanaUser(t, 551)
+
+	voucher := &DepositVoucher{Code: "REAPPLY10", BonusPercent: 10, PerUserLimit: 1}
+	require.NoError(t, CreateDepositVoucher(voucher))
+
+	// Applying the same voucher twice succeeds (MySQL RowsAffected == 0 regression).
+	_, err := ApplyDepositVoucher(551, "REAPPLY10")
+	require.NoError(t, err)
+	_, err = ApplyDepositVoucher(551, "REAPPLY10")
+	require.NoError(t, err)
+
+	// Applying without a deposit address returns a user-facing message.
+	_, err = ApplyDepositVoucher(9999, "REAPPLY10")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "Create your deposit address first")
+
+	// Usable check returns the active voucher, then rejects it once expired or disabled.
+	got, err := GetUsableDepositVoucherForUser(voucher.Id, 551)
+	require.NoError(t, err)
+	assert.Equal(t, voucher.Code, got.Code)
+
+	require.NoError(t, DB.Model(&DepositVoucher{}).Where("id = ?", voucher.Id).
+		Update("status", DepositVoucherStatusDisabled).Error)
+	_, err = GetUsableDepositVoucherForUser(voucher.Id, 551)
+	assert.ErrorIs(t, err, ErrDepositVoucherDisabled)
+
+	// Updating a nonexistent voucher returns ErrDepositVoucherNotFound.
+	err = UpdateDepositVoucher(&DepositVoucher{Id: 999999, BonusPercent: 10})
+	assert.ErrorIs(t, err, ErrDepositVoucherNotFound)
+}

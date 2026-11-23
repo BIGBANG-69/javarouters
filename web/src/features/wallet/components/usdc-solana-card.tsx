@@ -42,7 +42,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TitledCard } from '@/components/ui/titled-card'
-import { getSelf } from '@/lib/api'
+import { toIntlLocale } from '@/i18n/languages'
 import { formatQuota, formatTimestampToDate } from '@/lib/format'
 import { handleServerError } from '@/lib/handle-server-error'
 
@@ -61,8 +61,8 @@ import {
 
 const USDC_SOLANA_QUERY_KEY = ['usdc-solana-deposit'] as const
 
-function formatUsdc(atomic: number): string {
-  return (atomic / USDC_ATOMIC_PER_USD).toLocaleString(undefined, {
+function formatUsdc(atomic: number, locale: string | undefined): string {
+  return (atomic / USDC_ATOMIC_PER_USD).toLocaleString(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 6,
   })
@@ -133,17 +133,19 @@ function VoucherSummary({ voucher }: { voucher: UsdcSolanaVoucher }) {
   return <span>{parts.join(' · ')}</span>
 }
 
-function DepositRow({ deposit }: { deposit: UsdcSolanaDeposit }) {
-  const { t } = useTranslation()
+function DepositRow(props: { deposit: UsdcSolanaDeposit }) {
+  const { t, i18n } = useTranslation()
+  const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
+  const deposit = props.deposit
   return (
     <li className='flex items-center justify-between gap-3 py-2 text-sm'>
       <div className='min-w-0'>
         <div className='font-medium'>
-          {formatUsdc(deposit.amount_atomic)} USDC
+          {formatUsdc(deposit.amount_atomic, locale)} USDC
           {deposit.bonus_atomic > 0 && (
             <span className='text-success ml-2 text-xs font-normal'>
               {t('+{{amount}} bonus ({{code}})', {
-                amount: formatUsdc(deposit.bonus_atomic),
+                amount: formatUsdc(deposit.bonus_atomic, locale),
                 code: deposit.voucher_code,
               })}
             </span>
@@ -173,8 +175,11 @@ function DepositRow({ deposit }: { deposit: UsdcSolanaDeposit }) {
   )
 }
 
-export function UsdcSolanaCard() {
-  const { t } = useTranslation()
+export function UsdcSolanaCard(props: {
+  onDepositSuccess?: () => void | Promise<void>
+}) {
+  const { t, i18n } = useTranslation()
+  const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
   const queryClient = useQueryClient()
   const { data: info, isLoading } = useUsdcSolanaInfo()
 
@@ -275,7 +280,11 @@ export function UsdcSolanaCard() {
         )
       }
       setSignature('')
-      await Promise.all([refresh(), getSelf()])
+      if (result.outcome === 'credited') {
+        await Promise.all([refresh(), props.onDepositSuccess?.()])
+      } else {
+        await refresh()
+      }
     } catch (error) {
       handleServerError(error, t('Could not check the transaction'))
     } finally {
@@ -342,7 +351,7 @@ export function UsdcSolanaCard() {
                   <AlertDescription>
                     {t(
                       '{{amount}} USDC is on hold because your balance is at its limit. It is credited with your next deposit.',
-                      { amount: formatUsdc(info.held_atomic ?? 0) }
+                      { amount: formatUsdc(info.held_atomic ?? 0, locale) }
                     )}
                   </AlertDescription>
                 </Alert>

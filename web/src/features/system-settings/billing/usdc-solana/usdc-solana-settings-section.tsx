@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { toIntlLocale } from '@/i18n/languages'
 
 import {
   SettingsForm,
@@ -46,6 +47,7 @@ import {
 } from '../../components/settings-form-layout'
 import { SettingsPageFormActions } from '../../components/settings-page-context'
 import { SettingsSection } from '../../components/settings-section'
+import { useResetForm } from '../../hooks/use-reset-form'
 import { useUpdateOption } from '../../hooks/use-update-option'
 import { getUsdcSolanaAdminInfo, USDC_ATOMIC_PER_USD } from './api'
 
@@ -83,8 +85,8 @@ const RPC_SOURCE_LABELS: Record<string, string> = {
 
 type Values = z.infer<typeof schema>
 
-function usd(atomic: number | undefined): string {
-  return ((atomic ?? 0) / USDC_ATOMIC_PER_USD).toLocaleString(undefined, {
+function usd(atomic: number | undefined, locale: string | undefined): string {
+  return ((atomic ?? 0) / USDC_ATOMIC_PER_USD).toLocaleString(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
@@ -121,7 +123,8 @@ function StatusRow(props: {
 }
 
 function UsdcSolanaStatusPanel() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
   const updateOption = useUpdateOption()
   const queryClient = useQueryClient()
   const { data, isLoading } = useQuery({
@@ -146,8 +149,12 @@ function UsdcSolanaStatusPanel() {
   const lamports = status.fee_payer_lamports ?? 0
 
   async function clearRpcUrl() {
-    await updateOption.mutateAsync({ key: RPC_URL_OPTION_KEY, value: '' })
-    await queryClient.invalidateQueries({ queryKey: ['usdc-solana-admin'] })
+    try {
+      await updateOption.mutateAsync({ key: RPC_URL_OPTION_KEY, value: '' })
+      await queryClient.invalidateQueries({ queryKey: ['usdc-solana-admin'] })
+    } catch {
+      // Error toast is handled by useUpdateOption's onError callback.
+    }
   }
 
   let notice: ReactNode = null
@@ -223,7 +230,7 @@ function UsdcSolanaStatusPanel() {
                 label={t('Fee payer balance')}
                 danger={lamports < LOW_FEE_PAYER_LAMPORTS}
               >
-                {(lamports / LAMPORTS_PER_SOL).toLocaleString(undefined, {
+                {(lamports / LAMPORTS_PER_SOL).toLocaleString(locale, {
                   maximumFractionDigits: 4,
                 })}{' '}
                 SOL
@@ -232,7 +239,7 @@ function UsdcSolanaStatusPanel() {
           )}
           {status.sweep_min_atomic !== undefined && (
             <StatusRow label={t('Minimum balance to sweep')}>
-              {usd(status.sweep_min_atomic)} USDC
+              {usd(status.sweep_min_atomic, locale)} USDC
             </StatusRow>
           )}
         </div>
@@ -246,11 +253,11 @@ function UsdcSolanaStatusPanel() {
         />
         <Stat
           label={t('Credited USDC')}
-          value={`$${usd(stats.credited_atomic)}`}
+          value={`$${usd(stats.credited_atomic, locale)}`}
         />
         <Stat
           label={t('Voucher bonus paid')}
-          value={`$${usd(stats.bonus_atomic)}`}
+          value={`$${usd(stats.bonus_atomic, locale)}`}
         />
         <Stat
           label={t('Awaiting sweep')}
@@ -258,39 +265,44 @@ function UsdcSolanaStatusPanel() {
         />
         <Stat
           label={t('On hold (balance limit)')}
-          value={`$${usd(stats.held_atomic)}`}
+          value={`$${usd(stats.held_atomic, locale)}`}
         />
       </div>
     </div>
   )
 }
 
-export function UsdcSolanaSettingsSection({
-  defaultValues,
-}: {
+export function UsdcSolanaSettingsSection(props: {
   defaultValues: { enabled: boolean; treasuryAddress: string }
 }) {
   const { t } = useTranslation()
   const updateOption = useUpdateOption()
   const queryClient = useQueryClient()
 
+  const formDefaults = useMemo<Values>(
+    () => ({ ...props.defaultValues, rpcUrl: '' }),
+    [props.defaultValues]
+  )
+
   const form = useForm<Values>({
     resolver: zodResolver(schema) as unknown as Resolver<Values>,
-    defaultValues: { ...defaultValues, rpcUrl: '' },
+    defaultValues: formDefaults,
   })
+
+  useResetForm(form, formDefaults)
 
   const { isDirty, isSubmitting } = form.formState
   const busy = updateOption.isPending || isSubmitting
 
   async function onSubmit(values: Values) {
     const updates: Array<{ key: string; value: string }> = []
-    if (values.treasuryAddress !== defaultValues.treasuryAddress) {
+    if (values.treasuryAddress !== props.defaultValues.treasuryAddress) {
       updates.push({
         key: 'usdc_solana_setting.treasury_address',
         value: values.treasuryAddress,
       })
     }
-    if (values.enabled !== defaultValues.enabled) {
+    if (values.enabled !== props.defaultValues.enabled) {
       updates.push({
         key: 'usdc_solana_setting.enabled',
         value: String(values.enabled),
@@ -303,11 +315,16 @@ export function UsdcSolanaSettingsSection({
       toast.info(t('No changes to save'))
       return
     }
-    for (const update of updates) {
-      await updateOption.mutateAsync(update)
+    try {
+      for (const update of updates) {
+        await updateOption.mutateAsync(update)
+      }
+      form.reset({ ...values, rpcUrl: '' })
+    } catch {
+      // Error toast is handled by useUpdateOption's onError callback.
+    } finally {
+      await queryClient.invalidateQueries({ queryKey: ['usdc-solana-admin'] })
     }
-    form.reset({ ...values, rpcUrl: '' })
-    await queryClient.invalidateQueries({ queryKey: ['usdc-solana-admin'] })
   }
 
   return (

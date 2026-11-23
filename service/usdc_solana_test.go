@@ -232,3 +232,22 @@ func TestUsdcSolanaRpcEndpointPrecedence(t *testing.T) {
 	setting.RpcURLSecret = "https://two.example"
 	require.NotSame(t, first, runtime.rpc())
 }
+
+func TestUsdcSolanaSweepMinValidation(t *testing.T) {
+	t.Setenv("SOLANA_DEPOSIT_KEY_SECRET", strings.Repeat("k", 40))
+	for _, invalid := range []string{"Inf", "+Inf", "-1", "10abc", "NaN"} {
+		t.Run(invalid, func(t *testing.T) {
+			t.Setenv("SOLANA_SWEEP_MIN_USDC", invalid)
+			usdcSolanaRuntimeOnce = sync.Once{}
+			usdcSolanaRuntimeValue = nil
+			usdcSolanaRuntimeErr = nil
+			t.Cleanup(func() {
+				usdcSolanaRuntimeOnce = sync.Once{}
+				usdcSolanaRuntimeValue = nil
+				usdcSolanaRuntimeErr = nil
+			})
+			_, err := loadUsdcSolanaRuntime()
+			require.Error(t, err)
+		})
+	}
+}

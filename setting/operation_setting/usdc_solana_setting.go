@@ -35,6 +35,14 @@ func GetUsdcSolanaSetting() *UsdcSolanaSetting {
 	return &usdcSolanaSetting
 }
 
+// GetUsdcSolanaSettingSnapshot returns a synchronized copy of the settings
+// safe for concurrent reads from the background watcher and HTTP handlers.
+func GetUsdcSolanaSettingSnapshot() UsdcSolanaSetting {
+	common.OptionMapRWMutex.RLock()
+	defer common.OptionMapRWMutex.RUnlock()
+	return usdcSolanaSetting
+}
+
 const (
 	UsdcSolanaTreasuryOptionKey = "usdc_solana_setting.treasury_address"
 	UsdcSolanaRpcURLOptionKey   = "usdc_solana_setting.rpc_url_secret"

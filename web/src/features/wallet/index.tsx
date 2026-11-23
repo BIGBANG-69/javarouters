@@ -302,7 +302,7 @@ export function Wallet(props: WalletProps) {
                 id='wallet-add-funds'
                 className='flex scroll-mt-4 flex-col gap-4 sm:gap-5'
               >
-                <UsdcSolanaCard />
+                <UsdcSolanaCard onDepositSuccess={fetchUser} />
                 <RechargeFormCard
                   topupInfo={topupInfo}
                   presetAmounts={presetAmounts}

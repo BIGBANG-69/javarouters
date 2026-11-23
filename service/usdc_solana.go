@@ -13,6 +13,7 @@ import (
 	"io"
 	"math"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -57,7 +58,7 @@ const (
 	usdcSolanaTick         = 15 * time.Second
 	usdcSolanaScanBatch    = 20
 	usdcSolanaPageSize     = 100
-	usdcSolanaMaxPages     = 10
+	usdcSolanaMaxPages     = 50
 	usdcSolanaSweepPending = 120 // seconds to wait for a sent sweep to finalize
 	usdcSolanaCallTimeout  = 30 * time.Second
 )
@@ -97,7 +98,7 @@ const UsdcSolanaPublicRpcURL = "https://solana-rpc.publicnode.com"
 // usdcSolanaRpcEndpoint picks the RPC endpoint: the admin setting first, then
 // SOLANA_RPC_URL, then the free public endpoint. source names which one.
 func usdcSolanaRpcEndpoint() (endpoint string, source string) {
-	if value := strings.TrimSpace(operation_setting.GetUsdcSolanaSetting().RpcURLSecret); value != "" && operation_setting.ValidUsdcSolanaRpcURL(value) {
+	if value := strings.TrimSpace(operation_setting.GetUsdcSolanaSettingSnapshot().RpcURLSecret); value != "" && operation_setting.ValidUsdcSolanaRpcURL(value) {
 		return value, "admin"
 	}
 	if value := strings.TrimSpace(common.GetEnvOrDefaultString("SOLANA_RPC_URL", "")); value != "" {
@@ -154,11 +155,14 @@ func loadUsdcSolanaRuntime() (*usdcSolanaRuntime, error) {
 			runtime.feePayer = ed25519.PrivateKey(raw)
 		}
 		sweepMin := 1.0
-		if text := common.GetEnvOrDefaultString("SOLANA_SWEEP_MIN_USDC", ""); text != "" {
-			if _, err := fmt.Sscanf(text, "%g", &sweepMin); err != nil || math.IsNaN(sweepMin) || sweepMin < 0 {
-				usdcSolanaRuntimeErr = errors.New("SOLANA_SWEEP_MIN_USDC must be a non-negative number")
+		if text := strings.TrimSpace(common.GetEnvOrDefaultString("SOLANA_SWEEP_MIN_USDC", "")); text != "" {
+			parsed, err := strconv.ParseFloat(text, 64)
+			maxSweepMin := float64(math.MaxUint64) / float64(model.UsdcSolanaAtomicPerUSD)
+			if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) || parsed < 0 || parsed >= maxSweepMin {
+				usdcSolanaRuntimeErr = errors.New("SOLANA_SWEEP_MIN_USDC must be a non-negative finite number")
 				return
 			}
+			sweepMin = parsed
 		}
 		runtime.sweepMinAtomic = uint64(sweepMin * float64(model.UsdcSolanaAtomicPerUSD))
 		usdcSolanaRuntimeValue = runtime
@@ -169,7 +173,7 @@ func loadUsdcSolanaRuntime() (*usdcSolanaRuntime, error) {
 // UsdcSolanaAvailable reports whether users can create deposit addresses:
 // the option is on, payments are confirmed and the key secret is set.
 func UsdcSolanaAvailable() bool {
-	if !operation_setting.GetUsdcSolanaSetting().Enabled || !operation_setting.IsPaymentComplianceConfirmed() {
+	if !operation_setting.GetUsdcSolanaSettingSnapshot().Enabled || !operation_setting.IsPaymentComplianceConfirmed() {
 		return false
 	}
 	_, err := loadUsdcSolanaRuntime()
@@ -350,6 +354,12 @@ func runUsdcSolanaTick() {
 		err := runtime.scanAddress(ctx, address, now)
 		if err != nil {
 			common.SysError(common.LogText("usdc solana scan of address %d failed: %v", address.Id, err))
+			// Move a non-rate-limited failing address to the back of the queue
+			// without advancing its cursor, so it retries later without starving
+			// other addresses.
+			if !errors.Is(err, solana.ErrRateLimited) {
+				_ = model.RecordUsdcSolanaScan(address.Id, "", now)
+			}
 		}
 		if address.NeedsSweep && !errors.Is(err, solana.ErrRateLimited) {
 			if sweepErr := runtime.sweepAddress(ctx, address); sweepErr != nil {
@@ -372,13 +382,15 @@ func runUsdcSolanaTick() {
 func (r *usdcSolanaRuntime) scanAddress(ctx context.Context, address *model.UsdcSolanaAddress, now int64) error {
 	var signatures []solana.SignatureInfo
 	before := ""
-	for page := 0; page < usdcSolanaMaxPages; page++ {
+	reachedEnd := false
+	for range usdcSolanaMaxPages {
 		batch, err := r.rpc().GetSignaturesForAddress(ctx, address.TokenAccount, address.ScanCursor, before, usdcSolanaPageSize)
 		if err != nil {
 			return err
 		}
 		signatures = append(signatures, batch...)
 		if len(batch) < usdcSolanaPageSize {
+			reachedEnd = true
 			break
 		}
 		before = batch[len(batch)-1].Signature
@@ -395,7 +407,7 @@ func (r *usdcSolanaRuntime) scanAddress(ctx context.Context, address *model.Usdc
 		result, err := r.creditSignature(ctx, address, info.Signature, "")
 		switch {
 		case err == nil:
-			if result.Outcome == model.UsdcSolanaOutcomeCredited {
+			if result.Outcome == model.UsdcSolanaOutcomeCredited || result.Outcome == model.UsdcSolanaOutcomeHeld {
 				address.NeedsSweep = true
 			}
 		case errors.Is(err, ErrUsdcSolanaNotDeposit):
@@ -403,6 +415,9 @@ func (r *usdcSolanaRuntime) scanAddress(ctx context.Context, address *model.Usdc
 		default:
 			return err
 		}
+	}
+	if !reachedEnd {
+		return fmt.Errorf("signature backlog exceeded %d pages; cursor not advanced", usdcSolanaMaxPages)
 	}
 	return model.RecordUsdcSolanaScan(address.Id, newest, now)
 }
@@ -412,7 +427,7 @@ func (r *usdcSolanaRuntime) scanAddress(ctx context.Context, address *model.Usdc
 // cannot drain the fee payer. Sweeping is skipped without a fee payer or a
 // treasury; deposits are credited either way.
 func (r *usdcSolanaRuntime) sweepAddress(ctx context.Context, address *model.UsdcSolanaAddress) error {
-	treasuryText := strings.TrimSpace(operation_setting.GetUsdcSolanaSetting().TreasuryAddress)
+	treasuryText := strings.TrimSpace(operation_setting.GetUsdcSolanaSettingSnapshot().TreasuryAddress)
 	if r.feePayer == nil || !operation_setting.ValidUsdcSolanaTreasury(treasuryText) {
 		return nil
 	}
@@ -420,12 +435,16 @@ func (r *usdcSolanaRuntime) sweepAddress(ctx context.Context, address *model.Usd
 	if address.SweepSignature != "" && now-address.SweepSentAt < usdcSolanaSweepPending {
 		return nil
 	}
+	latestDepositId, err := model.GetLatestUsdcSolanaDepositId(address.UserId)
+	if err != nil {
+		return err
+	}
 	balance, exists, err := r.rpc().GetTokenAccountBalance(ctx, address.TokenAccount)
 	if err != nil {
 		return err
 	}
 	if !exists || balance == 0 || balance < r.sweepMinAtomic {
-		return model.RecordUsdcSolanaSweep(address.Id, "", 0)
+		return model.ClearUsdcSolanaNeedsSweepIfNoNewDeposit(address.Id, address.UserId, latestDepositId)
 	}
 	ownerKey, err := r.openKey(address)
 	if err != nil {
@@ -492,7 +511,7 @@ func UsdcSolanaRuntimeStatus() map[string]any {
 	if runtime.feePayer != nil {
 		feePayer := solana.Base58Encode(runtime.feePayer.Public().(ed25519.PublicKey))
 		status["fee_payer"] = feePayer
-		status["sweeping"] = operation_setting.ValidUsdcSolanaTreasury(operation_setting.GetUsdcSolanaSetting().TreasuryAddress)
+		status["sweeping"] = operation_setting.ValidUsdcSolanaTreasury(operation_setting.GetUsdcSolanaSettingSnapshot().TreasuryAddress)
 		if lamports, err := runtime.rpc().GetBalance(ctx, feePayer); err == nil {
 			status["fee_payer_lamports"] = lamports
 		}
