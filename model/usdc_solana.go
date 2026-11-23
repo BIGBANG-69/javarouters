@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/logger"
@@ -121,14 +122,55 @@ func RecordUsdcSolanaScan(id int, cursor string, scannedAt int64) error {
 	return DB.Model(&UsdcSolanaAddress{}).Where("id = ?", id).Updates(updates).Error
 }
 
-// RecordUsdcSolanaSweep stores a sent sweep, or clears NeedsSweep once the
-// token account is empty (signature == "").
+// RecordUsdcSolanaSweep stores a sent sweep, or clears NeedsSweep and sweep
+// metadata once the token account is empty (signature == "").
 func RecordUsdcSolanaSweep(id int, signature string, sentAt int64) error {
 	if signature == "" {
-		return DB.Model(&UsdcSolanaAddress{}).Where("id = ?", id).Update("needs_sweep", false).Error
+		return DB.Model(&UsdcSolanaAddress{}).Where("id = ?", id).Updates(map[string]any{
+			"needs_sweep":     false,
+			"sweep_signature": "",
+			"sweep_sent_at":   0,
+		}).Error
 	}
 	return DB.Model(&UsdcSolanaAddress{}).Where("id = ?", id).
 		Updates(map[string]any{"sweep_signature": signature, "sweep_sent_at": sentAt}).Error
+}
+
+// GetLatestUsdcSolanaDepositId returns the highest recorded deposit id for
+// userId, or 0 when none exists.
+func GetLatestUsdcSolanaDepositId(userId int) (int, error) {
+	var maxId int
+	err := DB.Model(&UsdcSolanaDeposit{}).
+		Select("coalesce(max(id), 0)").
+		Where("user_id = ?", userId).
+		Scan(&maxId).Error
+	return maxId, err
+}
+
+// ClearUsdcSolanaNeedsSweepIfNoNewDeposit clears needs_sweep only if no deposit
+// newer than latestDepositId was recorded since the balance check began, so a
+// concurrent credit cannot have its sweep flag overwritten.
+func ClearUsdcSolanaNeedsSweepIfNoNewDeposit(addressId int, userId int, latestDepositId int) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		var address UsdcSolanaAddress
+		if err := lockForUpdate(tx).Where("id = ?", addressId).First(&address).Error; err != nil {
+			return err
+		}
+		var newer int64
+		if err := tx.Model(&UsdcSolanaDeposit{}).
+			Where("user_id = ? AND id > ?", userId, latestDepositId).
+			Count(&newer).Error; err != nil {
+			return err
+		}
+		if newer > 0 {
+			return nil
+		}
+		return tx.Model(&UsdcSolanaAddress{}).Where("id = ?", addressId).Updates(map[string]any{
+			"needs_sweep":     false,
+			"sweep_signature": "",
+			"sweep_sent_at":   0,
+		}).Error
+	})
 }
 
 func ListUsdcSolanaDepositsByUser(userId int, limit int) ([]UsdcSolanaDeposit, error) {
@@ -195,6 +237,7 @@ const (
 
 type UsdcSolanaCreditResult struct {
 	Outcome        UsdcSolanaCreditOutcome `json:"outcome"`
+	HoldReason     string                  `json:"hold_reason,omitempty"`
 	CreditedAtomic int64                   `json:"credited_atomic"`
 	BonusAtomic    int64                   `json:"bonus_atomic"`
 	VoucherCode    string                  `json:"voucher_code,omitempty"`
@@ -248,6 +291,9 @@ func CreditUsdcSolanaDeposit(userId int, deposit UsdcSolanaDeposit, callerIp str
 		if err := tx.Create(&deposit).Error; err != nil {
 			return err
 		}
+		if deposit.AmountAtomic > math.MaxInt64-address.HeldAtomic {
+			return errors.New("usdc deposit held balance overflow")
+		}
 		paidAtomic := address.HeldAtomic + deposit.AmountAtomic
 		addressUpdates := map[string]any{"needs_sweep": true}
 
@@ -265,7 +311,10 @@ func CreditUsdcSolanaDeposit(userId int, deposit UsdcSolanaDeposit, callerIp str
 			}
 		}
 
-		quota, err := usdcAtomicToQuota(paidAtomic + bonusAtomic)
+		totalAtomic := decimal.NewFromInt(paidAtomic).Add(decimal.NewFromInt(bonusAtomic))
+		quota, err := common.WalletQuotaFromDecimalStrict(
+			totalAtomic.Div(decimal.NewFromInt(UsdcSolanaAtomicPerUSD)).Mul(decimal.NewFromFloat(common.QuotaPerUnit)),
+		)
 		bonusQuota := 0
 		if err == nil && bonusAtomic > 0 {
 			bonusQuota, err = usdcAtomicToQuota(bonusAtomic)
@@ -275,11 +324,23 @@ func CreditUsdcSolanaDeposit(userId int, deposit UsdcSolanaDeposit, callerIp str
 		} else if err == nil {
 			err = ErrInvalidTopUpQuota
 		}
+		var quotaClamp *common.QuotaClamp
 		switch {
 		case err == nil:
-		case errors.Is(err, ErrTopUpQuotaLimitExceeded) || errors.Is(err, ErrInvalidTopUpQuota):
+		case errors.Is(err, ErrTopUpQuotaLimitExceeded) ||
+			errors.Is(err, ErrInvalidTopUpQuota) ||
+			errors.Is(err, gorm.ErrRecordNotFound) ||
+			errors.As(err, &quotaClamp):
 			common.SysError(common.LogText("usdc solana deposit for user %d held: %v", userId, err))
 			result.Outcome = UsdcSolanaOutcomeHeld
+			switch {
+			case errors.Is(err, ErrInvalidTopUpQuota):
+				result.HoldReason = "below_minimum_unit"
+			case errors.Is(err, gorm.ErrRecordNotFound):
+				result.HoldReason = "user_unavailable"
+			default:
+				result.HoldReason = "balance_limit"
+			}
 			addressUpdates["held_atomic"] = paidAtomic
 			return tx.Model(&UsdcSolanaAddress{}).Where("id = ?", address.Id).Updates(addressUpdates).Error
 		default:

@@ -220,7 +220,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	if !common.PasswordRegisterEnabled {
-		common.ApiErrorT(c, "Password registration has been disabled by administrator, please use third-party account verification")
+		common.ApiErrorT(c, "New user registration has been disabled by administrator")
 		return
 	}
 	var user model.User

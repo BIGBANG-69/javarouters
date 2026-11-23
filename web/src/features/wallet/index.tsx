@@ -80,6 +80,7 @@ export function Wallet(props: WalletProps) {
   const [selectedCreemProduct, setSelectedCreemProduct] =
     useState<CreemProduct | null>(null)
   const [showSubscriptionPanel, setShowSubscriptionPanel] = useState(true)
+  const [usdcSolanaAvailable, setUsdcSolanaAvailable] = useState(false)
 
   const { status } = useStatus()
   const { currency } = useSystemConfig()
@@ -302,8 +303,12 @@ export function Wallet(props: WalletProps) {
                 id='wallet-add-funds'
                 className='flex scroll-mt-4 flex-col gap-4 sm:gap-5'
               >
-                <UsdcSolanaCard />
+                <UsdcSolanaCard
+                  onDepositSuccess={fetchUser}
+                  onAvailabilityChange={setUsdcSolanaAvailable}
+                />
                 <RechargeFormCard
+                  hasAlternativeTopup={usdcSolanaAvailable}
                   topupInfo={topupInfo}
                   presetAmounts={presetAmounts}
                   selectedPreset={selectedPreset}

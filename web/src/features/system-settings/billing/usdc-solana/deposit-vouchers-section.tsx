@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18next from 'i18next'
-import { Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -65,8 +65,7 @@ import {
 } from './api'
 
 const VOUCHERS_QUERY_KEY = ['deposit-vouchers'] as const
-// Vouchers are few; one page covers them.
-const VOUCHER_PAGE_SIZE = 100
+const VOUCHER_PAGE_SIZE = 20
 
 const schema = z.object({
   code: z
@@ -348,18 +347,31 @@ function VoucherFormDialog(props: {
 export function DepositVouchersSection() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const [page, setPage] = useState(1)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<DepositVoucher | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<DepositVoucher | null>(null)
 
-  const { data: vouchers = [], isLoading } = useQuery({
-    queryKey: VOUCHERS_QUERY_KEY,
+  const { data: voucherPage, isLoading } = useQuery({
+    queryKey: [...VOUCHERS_QUERY_KEY, page],
     queryFn: async () => {
-      const response = await getDepositVouchers(1, VOUCHER_PAGE_SIZE)
+      const response = await getDepositVouchers(page, VOUCHER_PAGE_SIZE)
       if (!response.success || !response.data) throw response
-      return response.data.items ?? []
+      return {
+        items: response.data.items ?? [],
+        total: response.data.total ?? 0,
+      }
     },
   })
+  const vouchers = voucherPage?.items ?? []
+  const totalVouchers = voucherPage?.total ?? 0
+  const totalPages = Math.max(1, Math.ceil(totalVouchers / VOUCHER_PAGE_SIZE))
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages)
+    }
+  }, [page, totalPages])
 
   const remove = useMutation({
     mutationFn: (id: number) => deleteDepositVoucher(id),
@@ -511,6 +523,45 @@ export function DepositVouchersSection() {
             },
           ]}
         />
+      )}
+
+      {!isLoading && totalVouchers > VOUCHER_PAGE_SIZE && (
+        <div className='flex items-center justify-between gap-2 pt-2 text-sm'>
+          <span className='text-muted-foreground text-xs'>
+            {t('Showing')} {(page - 1) * VOUCHER_PAGE_SIZE + 1}-
+            {Math.min(page * VOUCHER_PAGE_SIZE, totalVouchers)} {t('of')}{' '}
+            {totalVouchers}
+          </span>
+          <div className='flex items-center gap-2'>
+            <Button
+              type='button'
+              variant='outline'
+              size='icon'
+              className='h-8 w-8'
+              aria-label={t('Go to previous page')}
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className='h-4 w-4' />
+            </Button>
+            <span className='text-muted-foreground tabular-nums'>
+              {page} / {totalPages}
+            </span>
+            <Button
+              type='button'
+              variant='outline'
+              size='icon'
+              className='h-8 w-8'
+              aria-label={t('Go to next page')}
+              onClick={() =>
+                setPage((current) => Math.min(totalPages, current + 1))
+              }
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className='h-4 w-4' />
+            </Button>
+          </div>
+        </div>
       )}
 
       <VoucherFormDialog

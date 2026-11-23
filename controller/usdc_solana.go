@@ -56,7 +56,7 @@ func GetUsdcSolanaDeposit(c *gin.Context) {
 		data["pay_url"] = service.UsdcSolanaPayURL(address.OwnerAddress)
 		data["held_atomic"] = address.HeldAtomic
 		if address.PendingVoucherId > 0 {
-			if voucher, err := model.GetDepositVoucherById(address.PendingVoucherId); err == nil {
+			if voucher, err := model.GetUsableDepositVoucherForUser(address.PendingVoucherId, userId); err == nil {
 				data["voucher"] = newUsdcSolanaVoucherView(voucher)
 			}
 		}
@@ -110,6 +110,10 @@ func CheckUsdcSolanaTransaction(c *gin.Context) {
 
 // ApplyUsdcSolanaVoucher attaches a voucher to the user's next deposit.
 func ApplyUsdcSolanaVoucher(c *gin.Context) {
+	if !service.UsdcSolanaAvailable() {
+		common.ApiError(c, service.ErrUsdcSolanaUnavailable)
+		return
+	}
 	var request struct {
 		Code string `json:"code"`
 	}

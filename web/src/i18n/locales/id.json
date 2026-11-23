@@ -453,6 +453,7 @@
     "Use env or default": "Pakai env atau default",
     "Solana RPC URL": "URL RPC Solana",
     "Leave empty to keep the current endpoint": "Kosongkan untuk tetap memakai endpoint saat ini",
-    "Overrides SOLANA_RPC_URL. The saved URL is never shown again because it may include an API key; the status below shows the host in use.": "Menggantikan SOLANA_RPC_URL. URL yang disimpan tidak ditampilkan lagi karena bisa berisi API key; status di bawah menunjukkan host yang dipakai."
+    "Overrides SOLANA_RPC_URL. The saved URL is never shown again because it may include an API key; the status below shows the host in use.": "Menggantikan SOLANA_RPC_URL. URL yang disimpan tidak ditampilkan lagi karena bisa berisi API key; status di bawah menunjukkan host yang dipakai.",
+    "Deposit received, but the amount is too small to credit on its own. It will be credited with your next deposit.": "Deposit diterima, tetapi nominal terlalu kecil untuk dikreditkan sendiri. Dana akan dikreditkan bersama deposit berikutnya."
   }
 }

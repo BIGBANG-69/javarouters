@@ -182,13 +182,23 @@ func CreateDepositVoucher(voucher *DepositVoucher) error {
 	if existing > 0 {
 		return common.NewMessage("Voucher code already exists")
 	}
-	return DB.Create(voucher).Error
+	if err := DB.Create(voucher).Error; err != nil {
+		var dup int64
+		if DB.Model(&DepositVoucher{}).Where("code = ?", voucher.Code).Count(&dup).Error == nil && dup > 0 {
+			return common.NewMessage("Voucher code already exists")
+		}
+		return err
+	}
+	return nil
 }
 
 // UpdateDepositVoucher saves the editable fields; the code and the usage
 // count never change after creation.
 func UpdateDepositVoucher(voucher *DepositVoucher) error {
 	current, err := GetDepositVoucherById(voucher.Id)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return ErrDepositVoucherNotFound
+	}
 	if err != nil {
 		return err
 	}
@@ -220,6 +230,19 @@ func DeleteDepositVoucher(id int) error {
 	})
 }
 
+// GetUsableDepositVoucherForUser returns voucherId only when it still exists
+// and can currently be used by userId.
+func GetUsableDepositVoucherForUser(voucherId int, userId int) (*DepositVoucher, error) {
+	voucher, err := GetDepositVoucherById(voucherId)
+	if err != nil {
+		return nil, err
+	}
+	if err := voucher.usableBy(DB, userId, common.GetTimestamp()); err != nil {
+		return nil, err
+	}
+	return voucher, nil
+}
+
 // ApplyDepositVoucher attaches code to userId's deposit address, so their
 // next deposit gets the bonus. It replaces a voucher applied earlier.
 func ApplyDepositVoucher(userId int, code string) (*DepositVoucher, error) {
@@ -230,12 +253,16 @@ func ApplyDepositVoucher(userId int, code string) (*DepositVoucher, error) {
 	if err := voucher.usableBy(DB, userId, common.GetTimestamp()); err != nil {
 		return nil, err
 	}
-	result := DB.Model(&UsdcSolanaAddress{}).Where("user_id = ?", userId).Update("pending_voucher_id", voucher.Id)
-	if result.Error != nil {
-		return nil, result.Error
+	// Check address existence explicitly: MySQL returns RowsAffected == 0 when
+	// re-applying the same voucher because the column value does not change.
+	if _, err := GetUsdcSolanaAddressByUserId(userId); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, common.NewMessage("Create your deposit address first")
+		}
+		return nil, err
 	}
-	if result.RowsAffected == 0 {
-		return nil, common.NewMessage("Create your deposit address first")
+	if err := DB.Model(&UsdcSolanaAddress{}).Where("user_id = ?", userId).Update("pending_voucher_id", voucher.Id).Error; err != nil {
+		return nil, err
 	}
 	return voucher, nil
 }
